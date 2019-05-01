@@ -1,0 +1,2 @@
+xboard -size small -debug -fcp ../GiuChess-1.0 -sgf mygmz_1_0.pgn -tc 1 -inc 0 -autoflag
+
