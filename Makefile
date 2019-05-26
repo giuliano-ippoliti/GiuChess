@@ -16,6 +16,11 @@ $(PROG):	$(OBJECTS)
 	
 clean:
 	rm -f *.o $(PROG)
+	rm -f scripts/*.log
+	rm -f scripts/*.debug
+
+cleanpgn:
+	rm -f scripts/*.pgn
 
 nett:
 	rm -f *~

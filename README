@@ -5,7 +5,7 @@ In the scripts directory, you will find some sample scripts.
 N.B. installing the xboard GUI is not so easy in 2019 as it was in 2005 :-)
 
 For CentOS 7, I needed to download the source code from http://ftp.gnu.org/gnu/xboard/xboard-4.9.1.tar.gz
-Then, I need to install:
+Then, I had to install:
 - texinfo
 - cairo-devel
 - pango-devel
@@ -15,4 +15,4 @@ in order to run smoothly:
 - ./configure
 - make
 - make install
- 
+
