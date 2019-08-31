@@ -18,7 +18,7 @@
 
 #include "iniz.h"
 
-void iniz(piece *w, piece *b) {   //tableaux passés par référence
+void iniz(piece *w, piece *b) {   //tableaux passÃ©s par rÃ©fÃ©rence
 	int i;	
 	
 	srand(time(NULL));

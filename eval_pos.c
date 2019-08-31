@@ -151,9 +151,9 @@ float alphabeta(int depth, float alpha, float beta, int color, char *bestmove) {
 //llog("C1: %s\n", thismove);
 				}
 //conv_list_mov(thismove2, tmplist);
-//llog("C1 - d=%d : %s éxécuting\n", depth, thismove2);
+//llog("C1 - d=%d : %s Ã©xÃ©cuting\n", depth, thismove2);
 				list_execute_move(tmplist);
-//llog("C1 - d=%d : %s éxécuté\n", depth, thismove2);
+//llog("C1 - d=%d : %s Ã©xÃ©cutÃ©\n", depth, thismove2);
 
 				val = -alphabeta(depth-1, -beta, -alphaL, -color, bestmove);
 //llog("d=%d val(%s) = %f\n", depth, thismove2, val);
@@ -214,9 +214,9 @@ if (depth == depthmax) {
 				}
 				
 //conv_list_mov(thismove2, tmplist);
-//llog("C-1 - d=%d : %s éxécuting\n", depth, thismove2);
+//llog("C-1 - d=%d : %s Ã©xÃ©cuting\n", depth, thismove2);
 				list_execute_move(tmplist);
-//llog("C-1 - d=%d : %s éxécuté\n", depth, thismove2);
+//llog("C-1 - d=%d : %s Ã©xÃ©cutÃ©\n", depth, thismove2);
 				val = -alphabeta(depth-1, -beta, -alphaL, -color, bestmove);
 //llog("d=%d val(%s) = %f\n", depth, thismove2, val);
 /*
@@ -249,7 +249,7 @@ if (depth == depthmax) {
 	}
 }
 
-void conv_list_mov(char *move, MOVE_LIST movelist) {		//appelé 20/30 fois
+void conv_list_mov(char *move, MOVE_LIST movelist) {		//appelÃ© 20/30 fois
 	int order, i;
         char color, newpiece;
 	int oldrow, oldcol, newrow, newcol;

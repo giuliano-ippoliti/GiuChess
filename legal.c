@@ -363,7 +363,7 @@ int exists_legal_mov(int order, piece *friends, piece *enem) {      //we test le
 			friends[order].bm_pos = bm_work;             //change piece's position
 
 			eaten = -1;                                 //no eaten pieces right now
-			legal = 1;                              //presunzione di legalit‡
+			legal = 1;                              //presunzione di legalit√†
 			
 			for (j=0; j<=15; j++) {                        //change eaten piece position
 				if (enem[j].bm_pos == bm_work) {          //an enemy piece is in the candidate case
@@ -426,7 +426,7 @@ int is_legal_mov(int order, piece *friends, piece *enem, BITMASK bm_mov) {      
 	friends[order].bm_pos = bm_mov;             //change piece's position
 
 	eaten = -1;                                 //no eaten pieces right now
-	legal = 1;                              //presunzione di legalit‡
+	legal = 1;                              //presunzione di legalit√†
 			
 	for (j=0; j<=15; j++) {                        //change eaten piece position
 		if (enem[j].bm_pos == bm_mov) {          //an enemy piece is in the candidate case
@@ -463,7 +463,7 @@ int is_pawn_legal_mov(int order, piece *friends, piece *enem, BITMASK bm_mov) { 
 	friends[order].bm_pos = bm_mov;             //change piece's position
 
 	eaten = -1;                                 //no eaten pieces right now
-	legal = 1;                              //presunzione di legalit‡
+	legal = 1;                              //presunzione di legalit√†
 			
 	for (j=0; j<=15; j++) {                        //change eaten piece position
 		if (enem[j].bm_pos == bm_mov) {          //an enemy piece is in the candidate case

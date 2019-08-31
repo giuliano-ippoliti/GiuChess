@@ -106,7 +106,7 @@ void execute_move(int order, piece* friends, piece* enems, BITMASK bm_move, char
 			friends[0].bm_pos = friends[0].bm_pos << 3;            //long castle
 	}
 	
-	//see if there is a check!!!... à la fin
+	//see if there is a check!!!... Ã  la fin
 
 	if (check(order, friends, enems) == 1)
 		enems[4].under_check = 1;

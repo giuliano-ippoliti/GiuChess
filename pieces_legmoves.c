@@ -48,7 +48,7 @@ BITMASK rook_legmovs(int order, piece *friends, piece *enem) {
 			if (is_legal_mov(order, friends, enem, bm_work))
 				bm_result = bm_result | bm_work;
 //mettere un else?
-//se andando a sin. non è legale a un certo punto, puo` essere che continuando sia legale? si` se mangia un cavallo, ad es.
+//se andando a sin. non Ã¨ legale a un certo punto, puo` essere che continuando sia legale? si` se mangia un cavallo, ad es.
 			if ( (bm_work & LEFT) != 0)
 				break;
 		}
