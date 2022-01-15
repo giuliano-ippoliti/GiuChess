@@ -18,7 +18,7 @@
 
 #ifndef RW_THREAD_H
 #define RW_THREAD_H
-#include <pthread.h> 
+#include <pthread.h>
 #include <semaphore.h>
 #include <stdarg.h>
 #include "main.h"

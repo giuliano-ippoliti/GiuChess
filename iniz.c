@@ -18,14 +18,15 @@
 
 #include "iniz.h"
 
-void iniz(piece *w, piece *b) {   //tableaux passés par référence
-  int i;  
-  
+void iniz(piece *w, piece *b)     //tableaux passés par référence
+{
+  int i;
+
   srand(time(NULL));
 
   rule50 = 0;
   depthmax = STARTDPTH;
-  
+
   w[0].type = 'r';
   w[0].value = ROOK_VAL;
   w[0].bm_pos = 1;
@@ -39,7 +40,7 @@ void iniz(piece *w, piece *b) {   //tableaux passés par référence
   w[3].value = QUEEN_VAL;
   w[3].bm_pos = 1 << 3;
   w[4].type = 'k';
-  w[4].value = 2*ROOK_VAL + 2*KNIGHT_VAL + 2*BISHOP_VAL + QUEEN_VAL + 8*PAWN_VAL;
+  w[4].value = 2 * ROOK_VAL + 2 * KNIGHT_VAL + 2 * BISHOP_VAL + QUEEN_VAL + 8 * PAWN_VAL;
   w[4].bm_pos = 1 << 4;
   w[5].type = 'b';
   w[5].value = BISHOP_VAL;
@@ -50,12 +51,13 @@ void iniz(piece *w, piece *b) {   //tableaux passés par référence
   w[7].type = 'r';
   w[7].value = ROOK_VAL;
   w[7].bm_pos = 1 << 7;
-  for (i=8; i<=15; i++) {
+  for (i = 8; i <= 15; i++)
+  {
     w[i].type = 'p';
     w[i].value = PAWN_VAL;
     w[i].bm_pos = 1 << i;
   }
-  
+
   b[0].type = 'r';
   b[0].value = ROOK_VAL;
   b[0].bm_pos = pow(2, 56);
@@ -69,7 +71,7 @@ void iniz(piece *w, piece *b) {   //tableaux passés par référence
   b[3].value = QUEEN_VAL;
   b[3].bm_pos = pow(2, 59);
   b[4].type = 'k';
-  b[4].value = 2*ROOK_VAL + 2*KNIGHT_VAL + 2*BISHOP_VAL + QUEEN_VAL + 8*PAWN_VAL;
+  b[4].value = 2 * ROOK_VAL + 2 * KNIGHT_VAL + 2 * BISHOP_VAL + QUEEN_VAL + 8 * PAWN_VAL;
   b[4].bm_pos = pow(2, 60);
   b[5].type = 'b';
   b[5].value = BISHOP_VAL;
@@ -80,20 +82,22 @@ void iniz(piece *w, piece *b) {   //tableaux passés par référence
   b[7].type = 'r';
   b[7].value = ROOK_VAL;
   b[7].bm_pos = pow(2, 63);
-  
-  for (i=8; i<=15; i++) {
+
+  for (i = 8; i <= 15; i++)
+  {
     b[i].type = 'p';
     b[i].value = PAWN_VAL;
-    b[i].bm_pos = pow(2, 40+i);
+    b[i].bm_pos = pow(2, 40 + i);
   }
-  
-  for (i = 0; i<=15; i++) {
+
+  for (i = 0; i <= 15; i++)
+  {
     w[i].color = 'W';
     w[i].bm_legmov = 0;
     w[i].last_double_move = 0;
     w[i].deja_moved = 0;
     w[i].under_check = 0;
-    
+
     b[i].color = 'B';
     b[i].bm_legmov = 0;
     b[i].last_double_move = 0;

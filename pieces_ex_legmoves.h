@@ -19,14 +19,14 @@
 #ifndef _PIECES_EX_LEGMOVES_H
 #define _PIECES_EX_LEGMOVES_H
 
-#include "main.h" 
+#include "main.h"
 
 int exist_rook_legmov(int, piece *, piece *);
 int exist_bishop_legmov(int, piece *, piece *);
-int exist_queen_legmov(int , piece *, piece *);
-int exist_knight_legmov(int , piece *, piece *);
-int exist_white_pawn_legmov(int , piece *, piece *);
-int exist_black_pawn_legmov(int , piece *, piece *);
-int exist_king_legmov(int , piece *, piece *);
+int exist_queen_legmov(int, piece *, piece *);
+int exist_knight_legmov(int, piece *, piece *);
+int exist_white_pawn_legmov(int, piece *, piece *);
+int exist_black_pawn_legmov(int, piece *, piece *);
+int exist_king_legmov(int, piece *, piece *);
 
 #endif

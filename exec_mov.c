@@ -20,7 +20,8 @@
 
 int rule50;
 
-void execute_move(int order, piece* friends, piece* enems, BITMASK bm_move, char newpiece) {
+void execute_move(int order, piece* friends, piece* enems, BITMASK bm_move, char newpiece)
+{
   BITMASK bm_orig;
   int busy, new_col, i;
 
@@ -28,21 +29,25 @@ void execute_move(int order, piece* friends, piece* enems, BITMASK bm_move, char
   bm_orig = friends[order].bm_pos;
 
   busy = 0;
-  for (i = 0; i <=15; i++) {
-    if ((bm_move & enems[i].bm_pos) != 0) {    //an enemy in that square
-      busy = i+1;            //it must be > 0
-      enems[busy-1].bm_pos = 0;
-      enems[4].value -= enems[busy-1].value;
-      rule50=0;     //capture
+  for (i = 0; i <= 15; i++)
+  {
+    if ((bm_move & enems[i].bm_pos) != 0)      //an enemy in that square
+    {
+      busy = i + 1;          //it must be > 0
+      enems[busy - 1].bm_pos = 0;
+      enems[4].value -= enems[busy - 1].value;
+      rule50 = 0;   //capture
       break;
     }
   }
 
   friends[order].bm_pos = bm_move;
-  
-  if (friends[order].type == 'p') {
-    rule50=0;
-    if (newpiece != '-') {
+
+  if (friends[order].type == 'p')
+  {
+    rule50 = 0;
+    if (newpiece != '-')
+    {
       friends[order].type = newpiece;
       if (newpiece == 'q')
         friends[order].value = QUEEN_VAL;
@@ -56,46 +61,54 @@ void execute_move(int order, piece* friends, piece* enems, BITMASK bm_move, char
         llog("ANOMALIE: newpiece = %c\n", newpiece);
       friends[4].value += friends[order].value - 1;   // -1: a pawn is lost!
     }
-    else {
+    else
+    {
       //double pawn_mov
-      
-      if ( ((bm_orig & (bm_move << 16)) != 0) || ((bm_orig & (bm_move >> 16)) != 0) ) {
-        for (i=8; i<=15; i++) {   // we don't care other pieces
+
+      if (((bm_orig & (bm_move << 16)) != 0) || ((bm_orig & (bm_move >> 16)) != 0))
+      {
+        for (i = 8; i <= 15; i++) // we don't care other pieces
+        {
           if (i == order)
             friends[order].last_double_move = 1;
-          else 
+          else
             friends[i].last_double_move = 0;
         }
       }
-      else {
-        for (i=8; i<=15; i++)     // we don't care other pieces
+      else
+      {
+        for (i = 8; i <= 15; i++) // we don't care other pieces
           friends[i].last_double_move = 0;
-          
+
         //en passant
-        if (( ((bm_orig & (bm_move << 8)) == 0) && ((bm_orig & (bm_move >> 8)) == 0) ) && (busy == 0)) {
+        if ((((bm_orig & (bm_move << 8)) == 0) && ((bm_orig & (bm_move >> 8)) == 0)) && (busy == 0))
+        {
 
           get_column_from_bm(bm_move, &new_col);
-          enems[8+new_col].bm_pos = 0;
+          enems[8 + new_col].bm_pos = 0;
           enems[4].value -= 1;  //enems[4].value -= enems[8+new_col].value;
         }
       }
     }
   }
-  else {
+  else
+  {
     if (busy <= 0)
       rule50++;
-    for (i=0; i<=15; i++) {
+    for (i = 0; i <= 15; i++)
+    {
       friends[i].last_double_move = 0;
     }
   }
 
-  //castle                                         
-  if (friends[order].type == 'k') {
+  //castle
+  if (friends[order].type == 'k')
+  {
 
-    if ( (bm_orig & (bm_move >> 2)) != 0 )
+    if ((bm_orig & (bm_move >> 2)) != 0)
       friends[7].bm_pos = friends[7].bm_pos >> 2;            //short castle
 
-    if ( (bm_orig & (bm_move << 2)) != 0 )
+    if ((bm_orig & (bm_move << 2)) != 0)
       friends[0].bm_pos = friends[0].bm_pos << 3;            //long castle
   }
 
@@ -108,41 +121,47 @@ void execute_move(int order, piece* friends, piece* enems, BITMASK bm_move, char
 
 }
 
-void string_execute_move(char *move, piece *w, piece *b) {
+void string_execute_move(char *move, piece *w, piece *b)
+{
   int row, col, newrow, newcol, i;
   char newpiece;
   BITMASK bm_old, bm_new;
-  
+
   newpiece = '-';
-  col = move[0]-97;
-  row = move[1]-49;
-  newcol = move[2]-97;
-  newrow=move[3]-49;
-  
-  if (strlen(move) > 4) {
+  col = move[0] - 97;
+  row = move[1] - 49;
+  newcol = move[2] - 97;
+  newrow = move[3] - 49;
+
+  if (strlen(move) > 4)
+  {
     newpiece = move[4]; // q, r, k, b
   }
 
   conv_cases_bm(&bm_old, row, col);
-        conv_cases_bm(&bm_new, newrow, newcol);
+  conv_cases_bm(&bm_new, newrow, newcol);
 
-  for (i=0; i<=15; i++) {
-    if (w[i].bm_pos == bm_old) {
+  for (i = 0; i <= 15; i++)
+  {
+    if (w[i].bm_pos == bm_old)
+    {
       execute_move(i, w, b, bm_new, newpiece);
       return;
     }
-    if (b[i].bm_pos == bm_old) {
+    if (b[i].bm_pos == bm_old)
+    {
       execute_move(i, b, w, bm_new, newpiece);
       return;
     }
   }
 }
 
-void list_execute_move(MOVE_LIST movelist) {
+void list_execute_move(MOVE_LIST movelist)
+{
   int order;
-        char color, newpiece;
-        BITMASK bm_new;
-  
+  char color, newpiece;
+  BITMASK bm_new;
+
   order = movelist->order;
   color = movelist->color;
   newpiece = movelist->newpiece;

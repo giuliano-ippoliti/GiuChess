@@ -19,7 +19,7 @@
 #ifndef _PIECES_LEGMOVES_H
 #define _PIECES_LEGMOVES_H
 
-#include "main.h" 
+#include "main.h"
 
 BITMASK rook_legmovs(int, piece *, piece *);
 BITMASK bishop_legmovs(int, piece *, piece *);

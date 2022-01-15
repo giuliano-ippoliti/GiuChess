@@ -18,20 +18,24 @@
 
 #include "list.h"
 
-void crt_list(MOVE_LIST *lst) {
+void crt_list(MOVE_LIST *lst)
+{
   *lst = NULL;
 }
 
-int list_void(MOVE_LIST *lst) {
+int list_void(MOVE_LIST *lst)
+{
   return (lst == NULL);
 }
 
-void *ins_head (MOVE_LIST *new_lst, int order, char color, char newpiece, BITMASK bm_move, MOVE_LIST old_lst) { //new_list is modified
+void *ins_head(MOVE_LIST *new_lst, int order, char color, char newpiece, BITMASK bm_move, MOVE_LIST old_lst)    //new_list is modified
+{
   MOVE_LIST tmp_lst;
 top:
   tmp_lst = (MOVE_LIST)malloc(sizeof(MOVE_LEG));
-  
-  if (tmp_lst != NULL) {
+
+  if (tmp_lst != NULL)
+  {
     tmp_lst->order = order;
     tmp_lst->color = color;
     tmp_lst->newpiece = newpiece;
@@ -39,28 +43,33 @@ top:
     tmp_lst->next = old_lst;
     *new_lst = tmp_lst;
   }
-  else {
+  else
+  {
     llog("ORRORE\n");
     goto top;
   }
-    
+
   return (tmp_lst);
 }
 
-void canc_list1(MOVE_LIST *lst) {
+void canc_list1(MOVE_LIST *lst)
+{
   MOVE_LIST tmp_lst;
-  
-  while (*lst != NULL) {
+
+  while (*lst != NULL)
+  {
     tmp_lst = *lst;
     *lst = tmp_lst->next;
     free(tmp_lst);
   }
 }
 
-void canc_list(MOVE_LIST *lst) {
+void canc_list(MOVE_LIST *lst)
+{
   MOVE_LIST tmp_lst;
-  
-  if (*lst != NULL) {
+
+  if (*lst != NULL)
+  {
     tmp_lst = (*lst)->next;
     free(*lst);
     canc_list(&tmp_lst);
@@ -68,49 +77,54 @@ void canc_list(MOVE_LIST *lst) {
   }
 }
 
-void print_lst (MOVE_LIST lst) {
+void print_lst(MOVE_LIST lst)
+{
   MOVE_LIST tmp_lst;
-  
+
   tmp_lst = lst;
-  while (tmp_lst != NULL) {
+  while (tmp_lst != NULL)
+  {
     printf("%c\n", tmp_lst->color);
     tmp_lst = tmp_lst->next;
   }
 }
 
-void log_lst (MOVE_LIST lst) {
+void log_lst(MOVE_LIST lst)
+{
   MOVE_LIST tmp_lst;
   char move[6];
-  
+
   int order;
   char color, newpiece;
   int oldrow, oldcol, newrow, newcol;
   BITMASK bm_old, bm_new;
-  
+
   tmp_lst = lst;
-  while (tmp_lst != NULL) {
-    
+  while (tmp_lst != NULL)
+  {
+
     order = tmp_lst->order;
     color = tmp_lst->color;
     newpiece = tmp_lst->newpiece;
     bm_new = tmp_lst->bm_move;
-    
+
     if (color == 'W')
       bm_old = w[order].bm_pos;
     else
       bm_old = b[order].bm_pos;
-      
+
     conv_bm_cases(bm_old, &oldrow, &oldcol);
     conv_bm_cases(bm_new, &newrow, &newcol);
-    
-    move[0] = 97+oldcol;
-    move[1] = 49+oldrow;
-    move[2] = 97+newcol;
-    move[3] = 49+newrow;
-    
+
+    move[0] = 97 + oldcol;
+    move[1] = 49 + oldrow;
+    move[2] = 97 + newcol;
+    move[3] = 49 + newrow;
+
     if (newpiece == '-')
       move[4] = '\0';
-    else {
+    else
+    {
       move[4] = newpiece;
       move[5] = '\0';
     }
@@ -119,39 +133,42 @@ void log_lst (MOVE_LIST lst) {
   }
 }
 
-void log_lst2 (MOVE_LIST lst) {
+void log_lst2(MOVE_LIST lst)
+{
   MOVE_LIST tmp_lst;
   char move[6];
-  
+
   int order;
   char color, newpiece;
   int oldrow, oldcol, newrow, newcol;
   BITMASK bm_old, bm_new;
-  
+
   tmp_lst = lst;
-  while (tmp_lst != NULL) {
-    
+  while (tmp_lst != NULL)
+  {
+
     order = tmp_lst->order;
     color = tmp_lst->color;
     newpiece = tmp_lst->newpiece;
     bm_new = tmp_lst->bm_move;
-    
+
     if (color == 'W')
       bm_old = w[order].bm_pos;
     else
       bm_old = b[order].bm_pos;
-      
+
     conv_bm_cases(bm_old, &oldrow, &oldcol);
     conv_bm_cases(bm_new, &newrow, &newcol);
-    
-    move[0] = 97+oldcol;
-    move[1] = 49+oldrow;
-    move[2] = 97+newcol;
-    move[3] = 49+newrow;
-    
+
+    move[0] = 97 + oldcol;
+    move[1] = 49 + oldrow;
+    move[2] = 97 + newcol;
+    move[3] = 49 + newrow;
+
     if (newpiece == '-')
       move[4] = '\0';
-    else {
+    else
+    {
       move[4] = newpiece;
       move[5] = '\0';
     }

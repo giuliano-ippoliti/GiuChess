@@ -23,10 +23,10 @@
 
 void crt_list(MOVE_LIST *);
 int list_void(MOVE_LIST *);
-void *ins_head (MOVE_LIST *, int, char, char, BITMASK, MOVE_LIST);
+void *ins_head(MOVE_LIST *, int, char, char, BITMASK, MOVE_LIST);
 void canc_list(MOVE_LIST *);
-void print_lst (MOVE_LIST);
-void log_lst (MOVE_LIST);
+void print_lst(MOVE_LIST);
+void log_lst(MOVE_LIST);
 
 #include "list.h"
 

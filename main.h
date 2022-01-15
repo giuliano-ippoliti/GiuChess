@@ -76,36 +76,39 @@
 #define QUEEN_VAL 9.0
 //#define KING_VAL 100.0		//special value: sum of the others !
 
-typedef struct move_leg {
-	int order;
-	char color;
-	char newpiece;
-	BITMASK bm_move;
-	float evaluation;
-	struct move_leg *next;
+typedef struct move_leg
+{
+  int order;
+  char color;
+  char newpiece;
+  BITMASK bm_move;
+  float evaluation;
+  struct move_leg *next;
 } MOVE_LEG;
 
 typedef MOVE_LEG* MOVE_LIST;
 
-typedef struct move_ord {
-	char move[6];
-	float evaluation;
-	struct move_ord *next;
+typedef struct move_ord
+{
+  char move[6];
+  float evaluation;
+  struct move_ord *next;
 } MOVE_ORD;
 
 typedef MOVE_ORD* ORD_LIST;
 
-typedef struct {
-	char color;
-	char type;
-	float value;
-	int last_double_move;              //for pawns (en passant...)
-	int deja_moved;                    //for castle (rook and king)
-	int under_check;                   //for king
-	BITMASK bm_pos;
-	BITMASK bm_legmov;
-	} piece;
-	
+typedef struct
+{
+  char color;
+  char type;
+  float value;
+  int last_double_move;              //for pawns (en passant...)
+  int deja_moved;                    //for castle (rook and king)
+  int under_check;                   //for king
+  BITMASK bm_pos;
+  BITMASK bm_legmov;
+} piece;
+
 extern char last_moved_color;
 extern piece w[16], b[16];   //w et b sont des piece*
 extern BITMASK brow[8], bcol[8], matrix[8][8];

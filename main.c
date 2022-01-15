@@ -16,7 +16,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-#include "main.h" 
+#include "main.h"
 
 char last_moved_color;
 piece w[16], b[16];
@@ -26,7 +26,8 @@ BITMASK array[64];
 int DEBUGG;
 int depthmax;
 
-int main() {
+int main()
+{
   init_array();
   init_matrix();
   init_rc_arr();
