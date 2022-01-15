@@ -29,7 +29,7 @@ void llog(char *fmt, ...)
   vsnprintf(buf, 100, fmt, ap);
   va_end(ap);
 
-  fp = fopen("mylog.log", "a");
+  fp = fopen("giuchess.log", "a");
   if (fp == NULL)
     exit(6);
 
@@ -48,7 +48,7 @@ void xlog(char *fmt, ...)
   vsnprintf(buf, 100, fmt, ap);
   va_end(ap);
 
-  fp = fopen("xboard_cmnds.log", "a");
+  fp = fopen("protocol.log", "a");
   if (fp == NULL)
     exit(6);
 
@@ -253,7 +253,7 @@ void get_column_from_bm(BITMASK bm, int *column)
 }
 
 
-void conv_cases_bm(BITMASK *bm, int row, int column)      // chiamata quasi mai
+void conv_cases_bm(BITMASK *bm, int row, int column)
 {
   *bm = matrix[row][column];
 }

@@ -111,6 +111,7 @@ int rook_eats_king(int order, piece *friends, piece *enem, int en_k_row, int en_
   }
   else
     return 0;
+  return 0;
 }
 
 int bishop_eats_king(int order, piece *friends, piece *enem, int en_k_row, int en_k_col)
@@ -373,10 +374,9 @@ int is_illegal(int order, piece *friends, piece *enem)    //looks for an enemy p
 int exists_legal_mov(int order, piece *friends, piece *enem)        //we test legality for friends[order]
 {
   int i, j, eaten, legal;
-  int /*orig_row, orig_col, new_row, */new_col;              //for en passant
-  BITMASK bm_save_pos, bm_eaten_save_pos, bm_legmoves, bm_result, bm_work;
+  int new_col;              //for en passant
+  BITMASK bm_save_pos, bm_eaten_save_pos, bm_legmoves, bm_work;
 
-  bm_result = 0;
   bm_save_pos = friends[order].bm_pos;           //original position
   bm_legmoves = friends[order].bm_legmov;             //all candidate legal moves
 

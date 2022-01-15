@@ -147,7 +147,6 @@ int insuff_material()
       binsuff = 0;
   }
 
-
   if ((winsuff) && (binsuff))
     return 1;
   else
@@ -158,7 +157,7 @@ void white_move()
 {
   int nlegmov;
   char bestply2[10];
-  float tmpres;
+  float _;
   MOVE_LIST movelist;
 
   if (insuff_material())
@@ -183,7 +182,7 @@ void white_move()
     if (w[4].under_check)
       scrivi("0-1\n");
     else
-      scrivi("1/2-1/2 {Stalemate}\n");
+      scrivi("1/2-1/2 {stalemate}\n");
     return;
   }
 
@@ -194,19 +193,19 @@ void white_move()
   else
     depthmax = STARTDPTH;
 
-  tmpres = alphabeta(depthmax, -200, 200, -1, bestply2);
-
+  _ = alphabeta(depthmax, -200, 200, -1, bestply2);
+  if (_) {};
+  
   string_execute_move(bestply2, w, b);
   do_move(bestply2);
   canc_list(&movelist);
-
 }
 
 void black_move()
 {
   int nlegmov;
   char bestply2[10];
-  float tmpres;
+  float _;
   MOVE_LIST movelist;
 
   if (insuff_material())
@@ -232,7 +231,7 @@ void black_move()
     if (b[4].under_check)
       scrivi("1-0\n");
     else
-      scrivi("1/2-1/2 {Stalemate}\n");
+      scrivi("1/2-1/2 {stalemate}\n");
     return;
   }
 
@@ -243,8 +242,9 @@ void black_move()
   else
     depthmax = STARTDPTH;
 
-  tmpres = alphabeta(depthmax, -200, 200, 1, bestply2);   //1: white did last move
-
+  _ = alphabeta(depthmax, -200, 200, 1, bestply2);   //1: white did last move
+  if (_) {};
+  
   string_execute_move(bestply2, w, b);
 
   do_move(bestply2);
@@ -258,20 +258,23 @@ void wait_for_input()
   while (1)
   {
     leggi(buf, sizeof(buf));
+    
     xlog("%s\n", buf);
+    
     if (!strcmp(buf, "xboard"))
     {
+      /*
       scrivi("\n");
+      */
     }
     else if (!strcmp(buf, "protover 2"))
     {
-      scrivi("Chess\n");
-      scrivi("feature setboard=1 sigint=0 variants=\"normal\" draw=1 reuse=1 myname=\"GiuChess-1.0\" done=1\n");
+      scrivi("feature setboard=0 sigint=0 variants=\"normal\" draw=1 reuse=1 myname=\"GiuChess 1.0.02 RC\" done=1\n");
     }
     else if (!strcmp(buf, "new"))
     {
       white_to_move = 1;
-      force = 0;  //not in force mode
+      force = 0;
       iniz(w, b);
       cont = 0;
     }
@@ -286,7 +289,9 @@ void wait_for_input()
     else if (strstr(buf, "time"))
     {
       sscanf(buf, "%*s %d", &mtime);
-      llog("%d - %d\n", cont, mtime);
+      /*
+      llog("%d %d\n", cont, mtime);
+      */
     }
     else if (strstr(buf, "otim"))
     {
@@ -326,4 +331,3 @@ void wait_for_input()
     }
   }
 }
-

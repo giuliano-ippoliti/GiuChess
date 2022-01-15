@@ -31,9 +31,9 @@ int list_void(MOVE_LIST *lst)
 void *ins_head(MOVE_LIST *new_lst, int order, char color, char newpiece, BITMASK bm_move, MOVE_LIST old_lst)    //new_list is modified
 {
   MOVE_LIST tmp_lst;
-top:
-  tmp_lst = (MOVE_LIST)malloc(sizeof(MOVE_LEG));
 
+  tmp_lst = (MOVE_LIST)malloc(sizeof(MOVE_LEG));
+  
   if (tmp_lst != NULL)
   {
     tmp_lst->order = order;
@@ -43,12 +43,7 @@ top:
     tmp_lst->next = old_lst;
     *new_lst = tmp_lst;
   }
-  else
-  {
-    llog("ORRORE\n");
-    goto top;
-  }
-
+  
   return (tmp_lst);
 }
 
@@ -173,7 +168,7 @@ void log_lst2(MOVE_LIST lst)
       move[5] = '\0';
     }
 
-    llog("%s  %f\n", move, tmp_lst->evaluation);
+    llog("%s %f\n", move, tmp_lst->evaluation);
     tmp_lst = tmp_lst->next;
   }
 }
