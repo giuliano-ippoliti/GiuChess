@@ -18,6 +18,14 @@
 
 #include "main.h" 
 
+char last_moved_color;
+piece w[16], b[16];   //w et b sont des piece*
+BITMASK brow[8], bcol[8], matrix[8][8];
+int arr_row[64], arr_col[64];
+BITMASK array[64];
+int DEBUGG;
+int depthmax;
+
 void test_game2() {
 	int nlegmov, i, seed, rep;
 	struct timeval tv;

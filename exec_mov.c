@@ -18,6 +18,8 @@
 
 #include "exec_mov.h"
 
+int rule50;
+
 void execute_move(int order, piece* friends, piece* enems, BITMASK bm_move, char newpiece) {
 	BITMASK bm_orig;
 	int busy, new_row, new_col, i;

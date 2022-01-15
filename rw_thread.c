@@ -19,6 +19,9 @@
 
 #include "rw_thread.h"
 
+int cont;
+void xlog(char *fmt, ...);
+
 #define ZEITNOT 3800
 #define ZEITNOT2 500
 
