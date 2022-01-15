@@ -1,0 +1,273 @@
+xboard
+protover 2
+accepted setboard
+rejected sigint
+accepted variants
+rejected draw
+accepted reuse
+accepted myname
+accepted done
+new
+force
+level 40 1 0
+post
+easy
+d2d4
+g8f6
+c2c4
+g7g6
+b1c3
+d7d5
+c4d5
+f6d5
+e2e4
+d5c3
+b2c3
+f8g7
+c1e3
+c7c5
+d1d2
+d8a5
+g1f3
+b8c6
+a1c1
+c5d4
+a2a3
+time 6000
+otim 6000
+go
+time 5739
+otim 6000
+f1c4
+time 5609
+otim 6000
+f3d2
+time 5487
+otim 6000
+c4a2
+time 5448
+otim 6000
+e1e2
+time 5305
+otim 6000
+a2b1
+time 5211
+otim 6000
+e2f3
+time 5120
+otim 6000
+f3g3
+force
+result 0-1 {Black mates}
+new
+force
+level 40 1 0
+post
+easy
+d2d4
+d7d5
+c2c4
+c7c6
+g1f3
+g8f6
+e2e3
+e7e6
+b1c3
+b8d7
+d1c2
+f8d6
+f1d3
+e8g8
+e1g1
+h7h6
+b2b3
+b7b6
+c1b2
+c8b7
+time 6000
+otim 6000
+go
+time 5894
+otim 6000
+g7g6
+time 5616
+otim 6000
+d6b4
+time 5473
+otim 6000
+a7a5
+time 5313
+otim 6000
+b4d6
+time 5060
+otim 6000
+g8h8
+time 4882
+otim 6000
+h8g8
+time 4706
+otim 6000
+g8h8
+time 4486
+otim 6000
+f6h7
+time 4355
+otim 6000
+d8f6
+time 3931
+otim 6000
+f8b8
+time 3642
+otim 6000
+f6e7
+time 3631
+otim 6000
+h8g8
+time 3620
+otim 6000
+b6b5
+time 3616
+otim 6000
+g8h8
+time 3612
+otim 6000
+h7f6
+time 3608
+otim 6000
+h8h7
+force
+result 1-0 {White mates}
+new
+force
+level 40 1 0
+post
+easy
+c2c4
+c7c6
+g1f3
+g8f6
+g2g3
+d7d5
+f1g2
+c8f5
+c4d5
+c6d5
+d1b3
+d8b6
+b3b6
+a7b6
+b1c3
+b8c6
+d2d3
+e7e6
+c3b5
+f8b4
+c1d2
+e8e7
+f3d4
+b4d2
+e1d2
+f5g6
+g2f1
+time 6000
+otim 6000
+go
+time 5790
+otim 6000
+g3g4
+time 5640
+otim 6000
+d2c3
+time 5547
+otim 6000
+b2b4
+time 5514
+otim 6000
+c3b2
+time 5395
+otim 6000
+b5d4
+time 5318
+otim 6000
+d4c2
+time 5288
+otim 6000
+b2b1
+time 5249
+otim 6000
+h1g1
+time 5239
+otim 6000
+g1h1
+force
+result 0-1 {Black mates}
+new
+force
+level 40 1 0
+post
+easy
+e2e4
+c7c5
+g1f3
+d7d6
+d2d4
+c5d4
+f3d4
+g8f6
+b1c3
+b8c6
+c1g5
+c8d7
+d1d2
+a8c8
+d4b3
+h7h6
+g5f6
+g7f6
+f1d3
+c6e5
+time 6000
+otim 6000
+go
+time 5870
+otim 6000
+d6d5
+time 5658
+otim 6000
+d7e6
+time 5301
+otim 6000
+e8d7
+time 5165
+otim 6000
+c8c6
+time 4994
+otim 6000
+d7c8
+time 4770
+otim 6000
+c8b8
+time 4575
+otim 6000
+b8c7
+time 4322
+otim 6000
+c7b6
+time 4184
+otim 6000
+b6b7
+time 4057
+otim 5999
+e6b3
+time 4006
+otim 5999
+b7a6
+time 3973
+otim 5999
+a6b5
+time 3957
+otim 5999
+b5b4
+force
+result 1-0 {White mates}
+quit

@@ -25,7 +25,7 @@ void xlog(char *fmt, ...);
 #define ZEITNOT 3800
 #define ZEITNOT2 500
 
-int force, mtime, otim, white_to_move, first_move_done, tid;
+int force, mtime, otim, white_to_move, tid;
 
 void leggi(char *buf, size_t len) {
         int i=0;
@@ -245,7 +245,6 @@ void wait_for_input() {
 			scrivi("feature setboard=1 sigint=0 variants=\"normal\" draw=1 reuse=1 myname=\"GiuChess-1.0\" done=1\n");
 		}
 		else if (!strcmp(buf, "new")) {
-			first_move_done = 0;
 			white_to_move = 1;
 			force = 0;	//not in force mode
 			iniz(w, b);
@@ -279,20 +278,18 @@ void wait_for_input() {
 				white_move();
 			else
 				black_move();
-			first_move_done = 1;
+			white_to_move = 1 - white_to_move;
 		}
 		else if (is_move(buf)) {
 			string_execute_move(buf, w, b);
-			if (!first_move_done) {
-				white_to_move = 0;
-				first_move_done = 1;
-			}
+			white_to_move = 1 - white_to_move;
 			if (!force) {
 				cont++;
 				if (white_to_move)
 					white_move();
 				else
 					black_move();
+        white_to_move = 1 - white_to_move;
 			}
 		}
 	}
