@@ -1,4 +1,5 @@
+*.debug
 *.log
 *.o
-games.pgn
+*.pgn
 giuchess 
