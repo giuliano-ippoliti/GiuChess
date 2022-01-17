@@ -27,4 +27,4 @@ float eval_material();
 void conv_list_mov(char *, MOVE_LIST);
 
 #endif
- 
+

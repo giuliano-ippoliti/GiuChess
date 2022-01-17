@@ -18,12 +18,12 @@
 
 #ifndef RW_THREAD_H
 #define RW_THREAD_H
-#include <pthread.h> 
+#include <pthread.h>
 #include <semaphore.h>
 #include <stdarg.h>
 #include "main.h"
 
-int cont;
+extern int cont;
 void leggi(char *, size_t);
 void scrivi(char *);
 int is_move(char *);
