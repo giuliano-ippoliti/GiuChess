@@ -137,10 +137,8 @@ int insuff_material() {
 }
 
 void white_move() {
-	int nlegmov, i, seed, rep;
-	struct timeval tv;
-	char buf3[100], bestply2[10];
-	float tmpres;
+	int nlegmov;
+	char bestply2[10];
 	MOVE_LIST movelist;
 	
 	if (insuff_material()) {
@@ -173,7 +171,7 @@ void white_move() {
 	else
 		depthmax = STARTDPTH;
 
-	tmpres = alphabeta(depthmax, -200, 200, -1, bestply2);
+	alphabeta(depthmax, -200, 200, -1, bestply2);
 
 	string_execute_move(bestply2, w, b);
 	do_move(bestply2);
@@ -182,11 +180,8 @@ void white_move() {
 }
 
 void black_move() {
-	int nlegmov, i, seed, rep;
-	struct timeval tv;
-	char buf3[100], bestply2[10];
-	char movearray[300][8];
-	float tmpres;
+	int nlegmov;
+	char bestply2[10];
 	MOVE_LIST movelist;
 	
 	if (insuff_material()) {
@@ -220,7 +215,7 @@ void black_move() {
 	else
 		depthmax = STARTDPTH;
 		
-	tmpres = alphabeta(depthmax, -200, 200, 1, bestply2);		//1: white did last move
+	alphabeta(depthmax, -200, 200, 1, bestply2);		//1: white did last move
 
 	string_execute_move(bestply2, w, b);
 
@@ -233,7 +228,7 @@ void wait_for_input() {
 	
 	while(1) {
 		leggi(buf, sizeof(buf));
-		xlog("%s\n", buf);
+		llog("%s\n", buf);
 		if (!strcmp(buf, "xboard")) {
 			scrivi("\n");
 		}
@@ -294,4 +289,3 @@ void wait_for_input() {
 		}
 	}
 }
-				

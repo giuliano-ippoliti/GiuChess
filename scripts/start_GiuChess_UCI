@@ -1,0 +1,13 @@
+#!/bin/bash
+# Script to start GiuChess in UCI mode for testing
+
+echo "Starting GiuChess in UCI mode..."
+echo "You can now send UCI commands like:"
+echo "  uci"
+echo "  isready"
+echo "  position startpos"
+echo "  go depth 3"
+echo "  quit"
+echo ""
+
+../GiuChess-2.0 uci

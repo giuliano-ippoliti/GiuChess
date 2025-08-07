@@ -19,7 +19,7 @@
 #include "pieces_ex_legmoves.h" 
 
 int exist_rook_legmov(int order, piece *friends, piece *enem) {
-	int row, col, i;
+	int i;
 	BITMASK bm_pos, bm_work, focc, eocc;					//bm_result, 
 	
 	focc = eocc = 0;		//bmasks for busy squares
@@ -287,7 +287,7 @@ int exist_knight_legmov(int order, piece *friends, piece *enem) {
 }
 
 int exist_white_pawn_legmov(int order, piece *w, piece *b) {
-	int row, col, i;
+	int col, i;
 	BITMASK bm_pos, bm_work, focc, eocc;
 
 	focc = eocc = 0;		//bmasks for busy squares
@@ -350,7 +350,7 @@ int exist_white_pawn_legmov(int order, piece *w, piece *b) {
 
 
 int exist_black_pawn_legmov(int order, piece *w, piece *b) {
-	int row, col, i;
+	int col, i;
 	BITMASK bm_pos, bm_work, focc, eocc;
 
 	focc = eocc = 0;		//bmasks for busy squares
@@ -413,7 +413,7 @@ int exist_black_pawn_legmov(int order, piece *w, piece *b) {
 
 
 int exist_king_legmov(int order, piece *friends, piece *enems) {
-	int row, col, i;
+	int i;
 	BITMASK bm_pos, bm_work, focc, eocc;
 
 	focc = eocc = 0;

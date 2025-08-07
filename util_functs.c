@@ -235,5 +235,7 @@ void trace_time(char* text) {
 }
 
 unsigned long getesp() {
-    __asm__("movl %esp, %eax");
+    unsigned long result;
+    __asm__("movl %%esp, %0" : "=r" (result));
+    return result;
 }

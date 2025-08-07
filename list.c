@@ -82,7 +82,7 @@ void log_lst (MOVE_LIST lst) {
 	MOVE_LIST tmp_lst;
 	char move[6];
 	
-	int order, i;
+	int order;
 	char color, newpiece;
 	int oldrow, oldcol, newrow, newcol;
 	BITMASK bm_old, bm_new;
@@ -125,7 +125,7 @@ void log_lst2 (MOVE_LIST lst) {
 	MOVE_LIST tmp_lst;
 	char move[6];
 	
-	int order, i;
+	int order;
 	char color, newpiece;
 	int oldrow, oldcol, newrow, newcol;
 	BITMASK bm_old, bm_new;

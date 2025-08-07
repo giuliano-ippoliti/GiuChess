@@ -1,0 +1,34 @@
+# Test UCI Commands for GiuChess 2.0
+# Copy and paste these commands one by one when running: ./GiuChess-2.0 uci
+
+# 1. Initialize UCI
+uci
+
+# 2. Check if ready
+isready
+
+# 3. Start new game
+ucinewgame
+
+# 4. Set starting position
+position startpos
+
+# 5. Make some moves (King's Pawn opening)
+position startpos moves e2e4 e7e5 g1f3
+
+# 6. Search for best move (depth 3 for quick test)
+go depth 3
+
+# 7. Search with time limit (1 second)
+go movetime 1000
+
+# 8. Search for current position
+position startpos
+go depth 5
+
+# 9. Test with different position
+position startpos moves e2e4 d7d5 e4d5 d8d5 b1c3
+go depth 4
+
+# 10. Quit
+quit

@@ -106,13 +106,14 @@ typedef struct {
 	BITMASK bm_legmov;
 	} piece;
 	
-char last_moved_color;
-piece w[16], b[16];   //w et b sont des piece*
-BITMASK brow[8], bcol[8], matrix[8][8];
-int arr_row[64], arr_col[64];
-BITMASK array[64];
-int DEBUGG;
-int depthmax;
+extern char last_moved_color;
+extern piece w[16], b[16];   //w et b sont des piece*
+extern BITMASK brow[8], bcol[8], matrix[8][8];
+extern int arr_row[64], arr_col[64];
+extern BITMASK array[64];
+extern int DEBUGG;
+extern int depthmax;
+extern int rule50;
 
 #include "check.h"
 #include "iniz.h"
@@ -125,7 +126,6 @@ int depthmax;
 #include "rw_thread.h"
 #include "util_functs.h"
 #include "wblegmov.h"
+#include "uci.h"
 
 #endif
-
-

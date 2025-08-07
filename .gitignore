@@ -1,0 +1,24 @@
+# Compiled binaries
+*.exe
+*.o
+*.obj
+
+# Log files
+*.log
+mylog.log
+
+# Temporary files
+*.tmp
+*.temp
+
+# Compilation scripts (platform specific)
+compile.ps1
+
+# IDE files
+.vscode/
+*.swp
+*.swo
+
+# OS specific
+.DS_Store
+Thumbs.db

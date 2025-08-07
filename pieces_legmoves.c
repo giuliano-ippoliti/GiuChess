@@ -19,7 +19,7 @@
 #include "pieces_legmoves.h" 
 
 BITMASK rook_legmovs(int order, piece *friends, piece *enem) {
-	int row, col, i;
+	int i;
 	BITMASK bm_pos, bm_work, focc, eocc, bm_result;
 	
 	focc = eocc = 0;		//bmasks for busy squares
@@ -204,7 +204,7 @@ BITMASK bishop_legmovs(int order, piece *friends, piece *enem) {
 }
 
 BITMASK queen_legmovs(int order, piece *friends, piece *enem) {
-	BITMASK bm_pos, bm_result, bm_work;
+	BITMASK bm_result, bm_work;
 	
 	bm_work = rook_legmovs(order, friends, enem);
 	bm_result = bm_work;
@@ -292,7 +292,7 @@ BITMASK knight_legmovs(int order, piece *friends, piece *enem) {
 }
 
 BITMASK white_pawn_legmovs(int order, piece *w, piece *b) {
-	int row, col, i;
+	int col, i;
 	BITMASK bm_pos, bm_work, focc, eocc, bm_result;
 
 	focc = eocc = 0;		//bmasks for busy squares
@@ -358,7 +358,7 @@ BITMASK white_pawn_legmovs(int order, piece *w, piece *b) {
 
 
 BITMASK black_pawn_legmovs(int order, piece *w, piece *b) {
-	int row, col, i;
+	int col, i;
 	BITMASK bm_pos, bm_work, focc, eocc, bm_result;
 
 	focc = eocc = 0;		//bmasks for busy squares
@@ -422,7 +422,7 @@ BITMASK black_pawn_legmovs(int order, piece *w, piece *b) {
 
 
 BITMASK king_legmovs(int order, piece *friends, piece *enems) {
-	int row, col, i;
+	int i;
 	BITMASK bm_pos, bm_work, focc, eocc, bm_result;
 
 	focc = eocc = 0;

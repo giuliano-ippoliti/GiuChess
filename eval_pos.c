@@ -117,7 +117,6 @@ float alphabeta(int depth, float alpha, float beta, int color, char *bestmove) {
 	
 	piece wbck[16], bbck[16];
 	char thismove[6];
-	char thismove2[6];
 	int rule50bck;
 	
 	if (depth == 0)
@@ -250,7 +249,7 @@ if (depth == depthmax) {
 }
 
 void conv_list_mov(char *move, MOVE_LIST movelist) {		//appelé 20/30 fois
-	int order, i;
+	int order;
         char color, newpiece;
 	int oldrow, oldcol, newrow, newcol;
         BITMASK bm_old, bm_new;

@@ -23,7 +23,7 @@
 #include <stdarg.h>
 #include "main.h"
 
-int cont;
+extern int cont;
 void leggi(char *, size_t);
 void scrivi(char *);
 int is_move(char *);

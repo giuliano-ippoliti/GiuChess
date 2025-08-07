@@ -79,10 +79,7 @@ void black_leg_mov(piece *w, piece *b) {             // ~0.5ms
 }
 
 int white_exists_leg_moves(piece *w, piece *b) {
-	BITMASK bm_work;
-	int i, moves_nonzero;
-	
-	moves_nonzero = 0;
+	int i;
 	for (i=0; i<=15; i++) {
 		if (w[i].bm_pos == 0)
 			continue;
@@ -118,10 +115,7 @@ int white_exists_leg_moves(piece *w, piece *b) {
 }
 
 int black_exists_leg_moves(piece *w, piece *b) {
-	BITMASK bm_work;
-	int i, moves_nonzero;
-	
-	moves_nonzero = 0;
+	int i;
 	for (i=0; i<=15; i++) {
 		if (b[i].bm_pos == 0)
 			continue;

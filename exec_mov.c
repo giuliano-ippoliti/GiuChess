@@ -20,8 +20,7 @@
 
 void execute_move(int order, piece* friends, piece* enems, BITMASK bm_move, char newpiece) {
 	BITMASK bm_orig;
-	int busy, new_row, new_col, i;
-	char new_type;
+	int busy, new_col, i;
 
 	last_moved_color = friends[order].color;
 
@@ -130,7 +129,6 @@ void string_execute_move(char *move, piece *w, piece *b) {
 	newrow=move[3]-49;
 	
 	if (strlen(move) > 4) {
-		char tmp[20];
 		newpiece = move[4];           //q, r, k, b
 	}
 
@@ -151,7 +149,7 @@ void string_execute_move(char *move, piece *w, piece *b) {
 }
 
 void list_execute_move(MOVE_LIST movelist) {
-	int order, i;
+	int order;
         char color, newpiece;
         BITMASK bm_new;
 	

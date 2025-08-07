@@ -21,7 +21,7 @@
 
 #include "main.h"
 
-int rule50;
+extern int rule50;
 void execute_move(int, piece*, piece*, BITMASK, char);
 void string_execute_move(char *, piece *, piece *);
 void list_execute_move(MOVE_LIST);

@@ -98,6 +98,8 @@ int rook_eats_king(int order, piece *friends, piece *enem, int en_k_row, int en_
 	}
 	else
 		return 0;
+	
+	return 0; // Fallback return
 }
 
 int bishop_eats_king(int order, piece *friends, piece *enem, int en_k_row, int en_k_col) {
@@ -188,8 +190,7 @@ int queen_eats_king(int order, piece *friends, piece *enem, int en_k_row, int en
 
 int knight_eats_king(int order, piece *friends, piece *enem, int en_k_row, int en_k_col) {
 	BITMASK bm_pos;
-	BITMASK bm_work, focc, eocc, ekocc;
-	int i, row, col, delta_r, delta_c;
+	int row, col, delta_r, delta_c;
 
 	bm_pos = friends[order].bm_pos;
 	conv_bm_cases(bm_pos, &row, &col);
@@ -210,8 +211,6 @@ int knight_eats_king(int order, piece *friends, piece *enem, int en_k_row, int e
 
 int white_pawn_eats_king(int order, piece *friends, piece *enem, BITMASK king_pos) {
 	BITMASK bm_pos;
-	BITMASK bm_work, focc, eocc, ekocc;
-	int i, row, col, delta_r, delta_c;
 
 	bm_pos = friends[order].bm_pos;
 
@@ -239,8 +238,6 @@ return 0;*/
 
 int black_pawn_eats_king(int order, piece *friends, piece *enem, BITMASK king_pos) {
 	BITMASK bm_pos;
-	BITMASK bm_work, focc, eocc, ekocc;
-	int i, row, col, delta_r, delta_c;
 
 	bm_pos = friends[order].bm_pos;
 	
@@ -268,8 +265,7 @@ return 0;*/
 
 int king_eats_king(piece *friends, piece *enem, int en_k_row, int en_k_col) {
 	BITMASK bm_pos;
-	BITMASK bm_work, focc, eocc, ekocc;
-	int i, row, col, delta_r, delta_c;
+	int row, col, delta_r, delta_c;
 
 	bm_pos = friends[4].bm_pos;
 	conv_bm_cases(bm_pos, &row, &col);
@@ -350,10 +346,9 @@ int is_illegal(int order, piece *friends, piece *enem) {	//looks for an enemy pi
 
 int exists_legal_mov(int order, piece *friends, piece *enem) {      //we test legality for friends[order]
 	int i, j, eaten, legal;
-	int orig_row, orig_col, new_row, new_col;              //for en passant
-	BITMASK bm_save_pos, bm_eaten_save_pos, bm_legmoves, bm_result, bm_work, bm_work2;
+	int new_col;              //for en passant
+	BITMASK bm_save_pos, bm_eaten_save_pos, bm_legmoves, bm_work;
 
-	bm_result=0;                                //ok
 	bm_save_pos = friends[order].bm_pos;           //original position
 	bm_legmoves = friends[order].bm_legmov;             //all candidate legal moves
 
@@ -455,7 +450,7 @@ int is_legal_mov(int order, piece *friends, piece *enem, BITMASK bm_mov) {      
 
 int is_pawn_legal_mov(int order, piece *friends, piece *enem, BITMASK bm_mov) {      //we test legality for friends[order] which makes the bm_mov move
 	int j, eaten, legal;
-	int orig_row, orig_col, new_row, new_col;              //for en passant
+	int new_row, new_col;              //for en passant
 	BITMASK bm_save_pos, bm_eaten_save_pos;
 
 	bm_save_pos = friends[order].bm_pos;           //original position
