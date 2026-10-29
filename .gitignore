@@ -22,3 +22,6 @@ compile.ps1
 # OS specific
 .DS_Store
 Thumbs.db
+
+# Perft test binary
+perft-test

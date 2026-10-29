@@ -118,6 +118,18 @@ make clean
 
 ## 🧪 Testing
 
+### Perft (move generation check)
+```bash
+make perft
+```
+
+Builds `perft-test` (from [`perft.c`](perft.c) and the engine sources) and counts the leaf nodes of the legal move tree, comparing them to reference values from [chessprogramming.org](https://www.chessprogramming.org/Perft_Results):
+
+- Starting position, depths 1-5: 20, 400, 8902, 197281, 4865609
+- Kiwipete (`r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -`), depths 1-3: 48, 2039, 97862
+
+Each line prints `OK` or `MISMATCH`; the command exits with a non-zero status if any count differs.
+
 ### Quick UCI Test
 ```bash
 echo -e "uci\nisready\nquit" | ./GiuChess-2.0 uci
