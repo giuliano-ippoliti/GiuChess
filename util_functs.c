@@ -233,9 +233,3 @@ void trace_time(char* text) {
 	gettimeofday(&tv, NULL);
 	llog("%s: %d - %d\n", text, tv.tv_sec, tv.tv_usec);
 }
-
-unsigned long getesp() {
-    unsigned long result;
-    __asm__("movl %%esp, %0" : "=r" (result));
-    return result;
-}
