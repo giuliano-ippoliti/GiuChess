@@ -162,3 +162,71 @@ void log_lst2 (MOVE_LIST lst) {
 		tmp_lst = tmp_lst->next;
 	}
 }
+
+// MVV-LVA score of a capture (most valuable victim, least valuable
+// attacker), always > 0; -1 for a quiet move
+float capture_score(MOVE_LIST mv) {
+	piece *friends, *enems;
+	BITMASK bm_orig, bm_new;
+	int i;
+
+	if (mv->color == 'W') {
+		friends = w;
+		enems = b;
+	}
+	else {
+		friends = b;
+		enems = w;
+	}
+	bm_new = mv->bm_move;
+
+	for (i=0; i<=15; i++) {
+		if (enems[i].bm_pos == bm_new)
+			return 10*enems[i].value - friends[mv->order].value;
+	}
+
+	//en passant: diagonal pawn move to an empty square
+	if (friends[mv->order].type == 'p') {
+		bm_orig = friends[mv->order].bm_pos;
+		if ((bm_new != (bm_orig << 8)) && (bm_new != (bm_orig << 16)) &&
+		    (bm_new != (bm_orig >> 8)) && (bm_new != (bm_orig >> 16)))
+			return 10*PAWN_VAL - PAWN_VAL;
+	}
+
+	return -1;
+}
+
+// Puts captures first, best MVV-LVA score first; quiet moves keep their order
+void order_moves(MOVE_LIST *lst) {
+	MOVE_LIST caps, quiets, tmp_lst;
+	MOVE_LIST *pos, *qtail;
+
+	caps = NULL;
+	quiets = NULL;
+	qtail = &quiets;
+
+	while (*lst != NULL) {
+		tmp_lst = *lst;
+		*lst = tmp_lst->next;
+		tmp_lst->evaluation = capture_score(tmp_lst);
+
+		if (tmp_lst->evaluation < 0) {
+			tmp_lst->next = NULL;
+			*qtail = tmp_lst;
+			qtail = &tmp_lst->next;
+		}
+		else {				//sorted insertion, stable for equal scores
+			pos = &caps;
+			while ((*pos != NULL) && ((*pos)->evaluation >= tmp_lst->evaluation))
+				pos = &(*pos)->next;
+			tmp_lst->next = *pos;
+			*pos = tmp_lst;
+		}
+	}
+
+	pos = &caps;
+	while (*pos != NULL)
+		pos = &(*pos)->next;
+	*pos = quiets;
+	*lst = caps;
+}

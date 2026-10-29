@@ -27,6 +27,8 @@ void *ins_head (MOVE_LIST *, int, char, char, BITMASK, MOVE_LIST);
 void canc_list(MOVE_LIST *);
 void print_lst (MOVE_LIST);
 void log_lst (MOVE_LIST);
+float capture_score(MOVE_LIST);
+void order_moves(MOVE_LIST *);
 
 #include "list.h"
 
