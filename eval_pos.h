@@ -24,6 +24,9 @@
 float evaluate(int);
 float alphabeta(int, float, float, int, char *);
 int search(int, int, char *, long);
+void reset_history();
+void record_position();
+int threefold();
 extern unsigned long long search_nodes;
 float eval_material();
 void conv_list_mov(char *, MOVE_LIST);

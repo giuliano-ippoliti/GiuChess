@@ -100,5 +100,7 @@ void iniz(piece *w, piece *b) {   //tableaux passés par référence
 		b[i].deja_moved = 0;
 		b[i].under_check = 0;
 	}
+
+	reset_history();
 }
 

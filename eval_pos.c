@@ -174,6 +174,90 @@ static void update_pv(int ply, MOVE_LIST mv) {
 	pv_len[ply] = pv_len[ply+1] + 1;
 }
 
+#define HIST_MAX 2048
+
+typedef struct {
+	BITMASK pieces[2][6];		//squares of each piece type, white then black
+	int rights;			//castling rights and en passant
+} POS_KEY;
+
+static POS_KEY hist[HIST_MAX];		//positions of the game, then of the search path
+static int hist_len, hist_root;
+
+static void position_key(POS_KEY *key) {
+	const char *types = "pnbrqk";
+	piece *x;
+	int c, i;
+
+	memset(key, 0, sizeof(POS_KEY));
+	for (c = 0; c <= 1; c++) {
+		x = (c == 0) ? w : b;
+		for (i = 0; i <= 15; i++) {
+			if (x[i].bm_pos == 0)
+				continue;
+			key->pieces[c][strchr(types, x[i].type) - types] |= x[i].bm_pos;
+			if ((i >= 8) && x[i].last_double_move)
+				key->rights |= 1 << (c*8 + i-8);
+		}
+		if (!x[4].deja_moved && !x[7].deja_moved && (x[7].bm_pos != 0))
+			key->rights |= 1 << (16 + c*2);		//short castle
+		if (!x[4].deja_moved && !x[0].deja_moved && (x[0].bm_pos != 0))
+			key->rights |= 1 << (17 + c*2);		//long castle
+	}
+}
+
+// Starts a new game history with the current position
+void reset_history() {
+	hist_len = 0;
+	record_position();
+}
+
+// Records the current position of the game (after each move played)
+void record_position() {
+	if (hist_len < HIST_MAX - MAXPLY)
+		position_key(&hist[hist_len++]);
+}
+
+// Number of earlier occurrences of the position at index last, among the
+// positions since the last capture or pawn move (same side to move)
+static int count_repetitions(POS_KEY *key, int last, int from) {
+	int i, count = 0;
+
+	for (i = last - 2; (i >= from) && (i >= 0); i -= 2) {
+		if (memcmp(&hist[i], key, sizeof(POS_KEY)) == 0)
+			count++;
+	}
+	return count;
+}
+
+// XBoard: the current game position occurred three times
+int threefold() {
+	if (hist_len == 0)
+		return 0;
+	return count_repetitions(&hist[hist_len-1], hist_len-1, hist_len-1 - rule50) >= 2;
+}
+
+// Called after a move in the search: returns 1 if the new position is a
+// draw by repetition (already met in the search tree, or a third occurrence
+// counting the game), else records it and returns 0
+static int repeated_or_push() {
+	POS_KEY key;
+	int i;
+
+	position_key(&key);
+	for (i = hist_len - 2; (i >= hist_len - rule50) && (i >= 0); i -= 2) {
+		if (memcmp(&hist[i], &key, sizeof(POS_KEY)) == 0) {
+			if (i >= hist_root)
+				return 1;
+			if (count_repetitions(&key, hist_len, hist_len - rule50) >= 2)
+				return 1;
+			break;
+		}
+	}
+	hist[hist_len++] = key;
+	return 0;
+}
+
 float alphabeta(int depth, float alpha, float beta, int color, char *bestmove) {
 	float alphaL, val;
 	int nlgmv, ply;
@@ -184,6 +268,8 @@ float alphabeta(int depth, float alpha, float beta, int color, char *bestmove) {
 	int rule50bck;
 	
 	ply = depthmax - depth;
+	if (ply == 0)
+		hist_root = hist_len - 1;	//the root is the last game position
 	pv_len[ply] = 0;
 	if (search_stopped)
 		return 0.0;
@@ -228,7 +314,12 @@ float alphabeta(int depth, float alpha, float beta, int color, char *bestmove) {
 				list_execute_move(tmplist);
 //llog("C1 - d=%d : %s éxécuté\n", depth, thismove2);
 
-				val = -alphabeta(depth-1, -beta, -alphaL, -color, bestmove);
+				if (repeated_or_push())
+					val = 0.0;		//draw by repetition
+				else {
+					val = -alphabeta(depth-1, -beta, -alphaL, -color, bestmove);
+					hist_len--;
+				}
 //llog("d=%d val(%s) = %f\n", depth, thismove2, val);
 /*
 if (depth == depthmax) {
@@ -300,7 +391,12 @@ if (depth == depthmax) {
 //llog("C-1 - d=%d : %s éxécuting\n", depth, thismove2);
 				list_execute_move(tmplist);
 //llog("C-1 - d=%d : %s éxécuté\n", depth, thismove2);
-				val = -alphabeta(depth-1, -beta, -alphaL, -color, bestmove);
+				if (repeated_or_push())
+					val = 0.0;		//draw by repetition
+				else {
+					val = -alphabeta(depth-1, -beta, -alphaL, -color, bestmove);
+					hist_len--;
+				}
 //llog("d=%d val(%s) = %f\n", depth, thismove2, val);
 /*
 if (depth == depthmax) {

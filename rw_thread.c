@@ -151,6 +151,11 @@ void white_move() {
 		iniz(w, b);
 		return;
 	}
+	if (threefold()) {
+		scrivi("1/2-1/2 {3-fold repetition}\n");
+		iniz(w, b);
+		return;
+	}
 
 	white_leg_mov(w, b);
 
@@ -191,6 +196,11 @@ void black_move() {
 	}
 	if (cinquanta()) {
 		scrivi("1/2-1/2 {50 moves rule}\n");
+		iniz(w, b);
+		return;
+	}
+	if (threefold()) {
+		scrivi("1/2-1/2 {3-fold repetition}\n");
 		iniz(w, b);
 		return;
 	}
