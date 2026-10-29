@@ -139,10 +139,12 @@ void string_execute_move(char *move, piece *w, piece *b) {
 	for (i=0; i<=15; i++) {
 		if (w[i].bm_pos == bm_old) {
 			execute_move(i, w, b, bm_new, newpiece);
+			record_position();
 			return;
 		}
 		if (b[i].bm_pos == bm_old) {
 			execute_move(i, b, w, bm_new, newpiece);
+			record_position();
 			return;
 		}
 	}
