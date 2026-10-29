@@ -110,6 +110,11 @@ make
 make clean
 ```
 
+The default build is optimized (`-O2`) and portable. For a binary tuned to your own CPU only (it may not run on other machines):
+```bash
+make clean && make COMPIL_FLAGS="-Wall -g -O2 -march=native"
+```
+
 ## 📚 Documentation
 
 - [`README_UCI.md`](README_UCI.md) - UCI protocol usage guide

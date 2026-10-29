@@ -2,7 +2,11 @@ PROG = GiuChess-2.0
 PERFT = perft-test
 CSOURCES = check.c exec_mov.c main.c util_functs.c iniz.c legal.c pieces_legmoves.c pieces_ex_legmoves.c wblegmov.c rw_thread.c eval_pos.c list.c uci.c
 HEADERS = check.h exec_mov.h main.h util_functs.h iniz.h legal.h pieces_legmoves.h pieces_ex_legmoves.h wblegmov.h rw_thread.h eval_pos.h list.h uci.h
-COMPIL_FLAGS = -Wall -g -O4 -mno-bmi2
+COMPIL_FLAGS = -Wall -g -O2
+# x86-64 only: keep the binary runnable on CPUs without BMI2
+ifeq ($(shell uname -m),x86_64)
+COMPIL_FLAGS += -mno-bmi2
+endif
 LIB = -lm -lpthread
 CC = gcc
 OBJECTS = $(CSOURCES:.c=.o)
@@ -16,7 +20,7 @@ $(PROG):	$(OBJECTS)
 	$(CC) $(COMPIL_FLAGS) $(LIB) -o $(PROG) $(OBJECTS)
 	
 %.o:	%.c $(HEADERS)
-	$(CC) -c $<
+	$(CC) $(COMPIL_FLAGS) -c $<
 
 # Perft check: builds and runs the move generation test (exit status 1 on mismatch)
 perft:	$(PERFT)
