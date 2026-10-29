@@ -509,7 +509,9 @@ BITMASK king_legmovs(int order, piece *friends, piece *enems) {
 		bm_work = bm_pos << 1;
 		if ((bm_work & bm_result) == 0)	// "e1f1" not in move list
 			continue;
-			
+		if ((bm_work & eocc) != 0)	// "e1f1" is a capture
+			continue;
+
 		if (friends[order+3].deja_moved == 1)  //rook has already moved
 			continue;
 		
@@ -531,8 +533,10 @@ BITMASK king_legmovs(int order, piece *friends, piece *enems) {
 	//long castle
 	do {
 		bm_work = bm_pos >> 1;
-		if ((bm_work & bm_result) == 0)	// "e1c1" not in move list
-			continue;	
+		if ((bm_work & bm_result) == 0)	// "e1d1" not in move list
+			continue;
+		if ((bm_work & eocc) != 0)	// "e1d1" is a capture
+			continue;
 	
 		if (friends[order-4].deja_moved == 1)     //rook has already moved
 			continue;
