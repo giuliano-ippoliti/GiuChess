@@ -23,6 +23,8 @@
 
 float evaluate(int);
 float alphabeta(int, float, float, int, char *);
+int search(int, int, char *, long);
+extern unsigned long long search_nodes;
 float eval_material();
 void conv_list_mov(char *, MOVE_LIST);
 

@@ -39,6 +39,9 @@ char* uci_move_to_string(int from_square, int to_square, char promotion);
 int uci_string_to_square(char *square_str);
 void uci_square_to_string(int square, char *square_str);
 
+// Depth limit when searching on time only
+#define MAX_SEARCH_DEPTH 32
+
 // UCI search parameters
 typedef struct {
     int depth;
