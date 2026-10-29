@@ -127,6 +127,7 @@ float alphabeta(int depth, float alpha, float beta, int color, char *bestmove) {
 		black_leg_mov(w, b);
 		crt_list(&mvlst);
 		nlgmv = push_leg_mov(b, &mvlst);
+		order_moves(&mvlst);
 		if (nlgmv == 0) {
 			if (b[4].under_check) {		//white's move mated black
 				canc_list(&mvlst);
@@ -189,6 +190,7 @@ if (depth == depthmax) {
 		white_leg_mov(w, b);
 		crt_list(&mvlst);
 		nlgmv = push_leg_mov(w, &mvlst);
+		order_moves(&mvlst);
 		if (nlgmv == 0) {
 			if (w[4].under_check) {		//white's move mated black
 				canc_list(&mvlst);
