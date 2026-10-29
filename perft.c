@@ -46,6 +46,8 @@ static const PERFT_TEST tests[] = {
 	  { 20ULL, 400ULL, 8902ULL, 197281ULL, 4865609ULL } },
 	{ "kiwipete", "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -", 3,
 	  { 48ULL, 2039ULL, 97862ULL } },
+	{ "position3", "8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - -", 5,
+	  { 14ULL, 191ULL, 2812ULL, 43238ULL, 674624ULL } },
 };
 
 static float piece_value(char type) {
