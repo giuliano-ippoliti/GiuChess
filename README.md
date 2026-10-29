@@ -127,6 +127,7 @@ Builds `perft-test` (from [`perft.c`](perft.c) and the engine sources) and count
 
 - Starting position, depths 1-5: 20, 400, 8902, 197281, 4865609
 - Kiwipete (`r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -`), depths 1-3: 48, 2039, 97862
+- Position 3 (`8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - -`, en passant and pins), depths 1-5: 14, 191, 2812, 43238, 674624
 
 Each line prints `OK` or `MISMATCH`; the command exits with a non-zero status if any count differs.
 
