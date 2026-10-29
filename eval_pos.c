@@ -110,15 +110,86 @@ float evaluate(int color) {		//color which made the last move
 	}
 }
 
+#define MAXPLY 64
+
+typedef struct {
+	int order;
+	char newpiece;
+	BITMASK bm_move;
+} PV_MOVE;
+
+unsigned long long search_nodes;
+static PV_MOVE pv[MAXPLY][MAXPLY];	//principal variation found from each ply
+static int pv_len[MAXPLY];
+static PV_MOVE prev_pv[MAXPLY];		//principal variation of the previous iteration
+static int prev_pv_len, follow_pv;
+static int search_stopped;
+static long search_limit_ms;
+static struct timeval search_start;
+
+static long elapsed_ms() {
+	struct timeval now;
+
+	gettimeofday(&now, NULL);
+	return (now.tv_sec - search_start.tv_sec)*1000 + (now.tv_usec - search_start.tv_usec)/1000;
+}
+
+static void check_time() {
+	//depth 1 is always completed, so that there is a move to play
+	if ((search_limit_ms > 0) && (depthmax > 1) && (elapsed_ms() >= search_limit_ms))
+		search_stopped = 1;
+}
+
+// While following the previous principal variation, puts its move for this
+// ply at the head of the list
+static void pv_to_head(MOVE_LIST *lst, int ply) {
+	MOVE_LIST *pos, found;
+
+	if (!follow_pv)
+		return;
+	if (ply < prev_pv_len) {
+		for (pos = lst; *pos != NULL; pos = &(*pos)->next) {
+			if (((*pos)->order == prev_pv[ply].order) &&
+			    ((*pos)->bm_move == prev_pv[ply].bm_move) &&
+			    ((*pos)->newpiece == prev_pv[ply].newpiece)) {
+				found = *pos;
+				*pos = found->next;
+				found->next = *lst;
+				*lst = found;
+				return;
+			}
+		}
+	}
+	follow_pv = 0;
+}
+
+static void update_pv(int ply, MOVE_LIST mv) {
+	int i;
+
+	pv[ply][0].order = mv->order;
+	pv[ply][0].newpiece = mv->newpiece;
+	pv[ply][0].bm_move = mv->bm_move;
+	for (i = 0; i < pv_len[ply+1]; i++)
+		pv[ply][i+1] = pv[ply+1][i];
+	pv_len[ply] = pv_len[ply+1] + 1;
+}
+
 float alphabeta(int depth, float alpha, float beta, int color, char *bestmove) {
 	float alphaL, val;
-	int nlgmv;
-	MOVE_LIST tmplist, mvlst;
+	int nlgmv, ply;
+	MOVE_LIST tmplist, mvlst, curmove;
 	
 	piece wbck[16], bbck[16];
 	char thismove[6];
 	int rule50bck;
 	
+	ply = depthmax - depth;
+	pv_len[ply] = 0;
+	if (search_stopped)
+		return 0.0;
+	if ((++search_nodes & 1023) == 0)
+		check_time();
+
 	if (depth == 0)
 		return evaluate(color);
 	alphaL = alpha;
@@ -128,6 +199,7 @@ float alphabeta(int depth, float alpha, float beta, int color, char *bestmove) {
 		crt_list(&mvlst);
 		nlgmv = push_leg_mov(b, &mvlst);
 		order_moves(&mvlst);
+		pv_to_head(&mvlst, ply);
 		if (nlgmv == 0) {
 			if (b[4].under_check) {		//white's move mated black
 				canc_list(&mvlst);
@@ -146,6 +218,7 @@ float alphabeta(int depth, float alpha, float beta, int color, char *bestmove) {
 
 			tmplist = mvlst;
 			while ( tmplist != NULL ) {
+				curmove = tmplist;
 				if (depth == depthmax) {
 					conv_list_mov(thismove, tmplist);
 //llog("C1: %s\n", thismove);
@@ -166,6 +239,12 @@ if (depth == depthmax) {
 				memcpy(w, wbck, sizeof(w));
 				memcpy(b, bbck, sizeof(b));
 				rule50 = rule50bck;
+				follow_pv = 0;		//the principal variation is only the first move
+
+				if (search_stopped) {
+					canc_list(&mvlst);
+					return 0.0;
+				}
 				
 				tmplist = tmplist->next;
 				
@@ -175,6 +254,7 @@ if (depth == depthmax) {
 				}
 				if (val > alphaL) {
 					alphaL = val;
+					update_pv(ply, curmove);
 					
 					if (depth == depthmax) {
 						strcpy(bestmove, thismove);
@@ -191,6 +271,7 @@ if (depth == depthmax) {
 		crt_list(&mvlst);
 		nlgmv = push_leg_mov(w, &mvlst);
 		order_moves(&mvlst);
+		pv_to_head(&mvlst, ply);
 		if (nlgmv == 0) {
 			if (w[4].under_check) {		//white's move mated black
 				canc_list(&mvlst);
@@ -209,6 +290,7 @@ if (depth == depthmax) {
 
 			tmplist = mvlst;
 			while ( tmplist != NULL ) {
+				curmove = tmplist;
 				if (depth == depthmax) {
 					conv_list_mov(thismove, tmplist);
 //llog("C-1: %s\n", thismove);
@@ -229,6 +311,12 @@ if (depth == depthmax) {
 				memcpy(w, wbck, sizeof(w));
 				memcpy(b, bbck, sizeof(b));
 				rule50 = rule50bck;
+				follow_pv = 0;		//the principal variation is only the first move
+
+				if (search_stopped) {
+					canc_list(&mvlst);
+					return 0.0;
+				}
 				
 				tmplist = tmplist->next;
 				
@@ -238,6 +326,7 @@ if (depth == depthmax) {
 				}
 				if (val > alphaL) {
 					alphaL = val;
+					update_pv(ply, curmove);
 					
 					if (depth == depthmax) {
 						strcpy(bestmove, thismove);
@@ -248,6 +337,45 @@ if (depth == depthmax) {
 			return alphaL;
 		}
 	}
+}
+
+// Iterative deepening: searches depth 1, 2, ... maxdepth, trying the previous
+// iteration's principal variation first. With limit_ms > 0, stops when the
+// time is up and keeps the best move of the last completed depth.
+// Returns the last completed depth.
+int search(int maxdepth, int color, char *bestmove, long limit_ms) {
+	char itermove[10];
+	int depth, done;
+
+	if (maxdepth > MAXPLY-1)
+		maxdepth = MAXPLY-1;
+
+	gettimeofday(&search_start, NULL);
+	search_limit_ms = limit_ms;
+	search_stopped = 0;
+	search_nodes = 0;
+	prev_pv_len = 0;
+	done = 0;
+	itermove[0] = '\0';
+
+	for (depth = 1; depth <= maxdepth; depth++) {
+		depthmax = depth;
+		follow_pv = 1;
+		alphabeta(depth, -200, 200, color, itermove);
+		if (search_stopped)
+			break;
+
+		strcpy(bestmove, itermove);
+		memcpy(prev_pv, pv[0], pv_len[0]*sizeof(PV_MOVE));
+		prev_pv_len = pv_len[0];
+		done = depth;
+
+		//a deeper search would most likely not finish in time
+		if ((limit_ms > 0) && (elapsed_ms() >= limit_ms/2))
+			break;
+	}
+
+	return done;
 }
 
 void conv_list_mov(char *move, MOVE_LIST movelist) {		//appelé 20/30 fois

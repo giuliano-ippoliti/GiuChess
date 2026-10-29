@@ -137,7 +137,7 @@ void uci_parse_go(char *input) {
     
     // Initialize search parameters
     memset(&uci_search_params, 0, sizeof(UCI_SEARCH_PARAMS));
-    uci_search_params.depth = STARTDPTH;
+    // depth 0: not given, resolved in uci_search_and_move()
     
     token = strtok(input_copy, " ");
     token = strtok(NULL, " "); // Skip "go"
@@ -173,19 +173,43 @@ void uci_parse_go(char *input) {
 
 void uci_search_and_move() {
     char bestmove[10];
-    int color;
+    int color, depth, reached, mytime, myinc, movestogo;
+    long limit_ms;
+    struct timeval start, end;
     
     // Determine who is to move
     color = (last_moved_color == 'W') ? 1 : -1; // 1 for black, -1 for white
     
-    // Set search depth
-    depthmax = uci_search_params.depth;
+    // Time for this move: movetime, or a share of the remaining clock
+    mytime = (color == -1) ? uci_search_params.wtime : uci_search_params.btime;
+    myinc = (color == -1) ? uci_search_params.winc : uci_search_params.binc;
+    limit_ms = 0;
+    if (uci_search_params.movetime > 0) {
+        limit_ms = uci_search_params.movetime;
+    } else if (mytime > 0) {
+        movestogo = (uci_search_params.movestogo > 0) ? uci_search_params.movestogo : 30;
+        limit_ms = mytime / movestogo + myinc / 2;
+        if (limit_ms > mytime / 2)
+            limit_ms = mytime / 2;
+    }
+    
+    // Set search depth: as given, else unlimited with a time limit, else default
+    depth = uci_search_params.depth;
+    if (depth <= 0)
+        depth = (limit_ms > 0) ? MAX_SEARCH_DEPTH : STARTDPTH;
     
     // Perform search
-    alphabeta(depthmax, -200, 200, color, bestmove);
+    gettimeofday(&start, NULL);
+    reached = search(depth, color, bestmove, limit_ms);
+    gettimeofday(&end, NULL);
+    
+    char output[100];
+    sprintf(output, "info depth %d time %ld nodes %llu", reached,
+            (long)((end.tv_sec - start.tv_sec) * 1000 + (end.tv_usec - start.tv_usec) / 1000),
+            search_nodes);
+    uci_send(output);
     
     // Send best move
-    char output[100];
     sprintf(output, "bestmove %s", bestmove);
     uci_send(output);
     
