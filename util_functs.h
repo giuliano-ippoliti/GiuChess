@@ -30,6 +30,5 @@ void conv_bm_cases(BITMASK, int *, int *);
 void get_column_from_bm(BITMASK, int *);
 void conv_cases_bm(BITMASK *, int, int);
 void trace_time(char*);
-unsigned long getesp();
 
 #endif
