@@ -22,7 +22,7 @@
 #include "main.h"
 
 // UCI protocol functions
-void uci_loop();
+void uci_loop(const char *first);
 void uci_send_id();
 void uci_send_options();
 void uci_parse_position(char *input);

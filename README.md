@@ -34,14 +34,15 @@ gcc -Wall -g -O2 -o GiuChess-2.0.exe *.c -lm
 
 ### Running the Engine
 
-#### UCI Mode (Recommended)
-```bash
-./GiuChess-2.0 uci
-```
-
-#### XBoard Mode
+GiuChess speaks UCI by default:
 ```bash
 ./GiuChess-2.0
+```
+
+It switches to XBoard if the GUI's first command is `xboard`, as XBoard GUIs do, so no setting is needed with either kind of GUI. The `uci` or `xboard` argument forces a protocol:
+```bash
+./GiuChess-2.0 uci
+./GiuChess-2.0 xboard
 ```
 
 ## 🎮 Using with Chess GUIs
@@ -50,13 +51,16 @@ gcc -Wall -g -O2 -o GiuChess-2.0.exe *.c -lm
 1. Download and install [Arena Chess GUI](http://www.playwitharena.de/)
 2. Go to `Engines` → `Install New Engine`
 3. Browse to your compiled `GiuChess-2.0.exe`
-4. Select "UCI" as the protocol
+4. Select "UCI" as the protocol (the engine speaks UCI by default)
 5. Click OK and start playing!
 
 ### En Croissant (macOS, Linux, Windows)
 1. Build the engine with `make`
 2. Go to `Engines` → `Add new` → `Local`
-3. Select `scripts/giuchess_uci`: it starts `GiuChess-2.0` with the `uci` argument, which En Croissant cannot pass itself
+3. Select `GiuChess-2.0` (UCI by default; `scripts/giuchess_uci`, which passes the `uci` argument, also works)
+
+### Lichess
+GiuChess can play on lichess.org as a bot account: see [`lichess/README.md`](lichess/README.md).
 
 ### Other UCI-Compatible GUIs
 GiuChess 2.0 works with any UCI-compatible chess interface:

@@ -1,0 +1,47 @@
+# lichess-bot configuration for GiuChess. See lichess/README.md.
+#
+# Copied to lichess/config.yml by lichess/setup.sh (that file is ignored by
+# git). Never write the token in a committed file: set the LICHESS_BOT_TOKEN
+# environment variable instead, it overrides the value below.
+# Settings not given here take lichess-bot's defaults.
+
+token: "set-the-LICHESS_BOT_TOKEN-environment-variable"
+url: "https://lichess.org/"
+
+engine:
+  dir: "../.."                 # The repository root, relative to lichess/lichess-bot where the bot runs.
+  name: "GiuChess-2.0"         # Speaks UCI by default. Build it first with "make".
+  protocol: "uci"
+  ponder: false                # GiuChess does not think on the opponent's time.
+  uci_options: {}              # GiuChess has no option to set here ("Depth" is unused with a clock).
+  draw_or_resign:
+    resign_enabled: false
+    offer_draw_enabled: false
+
+move_overhead: 1000            # Milliseconds kept for network lag on each move. Increase if the bot loses on time.
+abort_time: 30                 # Abort a game if the opponent does not move for this many seconds.
+
+challenge:                     # Which challenges to accept.
+  concurrency: 1               # One game at a time: the engine uses one CPU core per game.
+  accept_bot: true             # Also accept challenges from other bots.
+  only_bot: false
+  min_increment: 0
+  max_increment: 20            # Seconds.
+  min_base: 60                 # Seconds: GiuChess is too slow for very short games.
+  max_base: 1800
+  variants:
+    - standard                 # GiuChess plays standard chess only.
+  time_controls:
+    - blitz
+    - rapid
+    - classical
+  modes:
+    - casual
+    - rated
+
+greeting:
+  hello: "Hi! I'm {me}, the GiuChess engine (https://github.com/giuliano-ippoliti/GiuChess). Good luck!"
+  goodbye: "Good game!"
+
+matchmaking:
+  allow_matchmaking: false     # Set to true to let the bot challenge other bots when idle.

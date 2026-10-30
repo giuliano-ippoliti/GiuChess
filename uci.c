@@ -326,6 +326,8 @@ void uci_search_and_move() {
         limit_ms = mytime / movestogo + myinc / 2;
         if (limit_ms > mytime / 2)
             limit_ms = mytime / 2;
+        if (limit_ms < 1)
+            limit_ms = 1;   // almost no time left: depth 1 only, not "no limit"
     }
     
     // Set search depth: as given, else unlimited with a time limit or
@@ -368,10 +370,14 @@ void uci_search_and_move() {
     string_execute_move(bestmove, w, b);
 }
 
-void uci_loop() {
+// UCI main loop; first, if given, is a command already read (protocol detection)
+void uci_loop(const char *first) {
     static char input[sizeof(uci_inbuf)];
     
     uci_mode = 1;
+    if (first != NULL && first[0] != '\0') {
+        uci_inlen = snprintf(uci_inbuf, sizeof(uci_inbuf), "%s\n", first);
+    }
     
     while (!uci_quit_received && uci_read_line(input, sizeof(input))) {
         if (strcmp(input, "uci") == 0) {
