@@ -127,5 +127,6 @@ extern int rule50;
 #include "util_functs.h"
 #include "wblegmov.h"
 #include "uci.h"
+#include "fen.h"
 
 #endif

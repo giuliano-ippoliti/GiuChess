@@ -44,10 +44,8 @@ void uci_set_position_startpos() {
 }
 
 void uci_set_position_fen(char *fen) {
-    // For now, we'll implement a basic FEN parser
-    // This is a simplified version - full FEN parsing would be more complex
-    uci_set_position_startpos(); // Fallback to startpos for now
-    // TODO: Implement full FEN parsing
+    if (!load_fen(fen))
+        uci_set_position_startpos(); // Position that cannot be represented
 }
 
 int uci_string_to_square(char *square_str) {
@@ -71,30 +69,18 @@ void uci_square_to_string(int square, char *square_str) {
 }
 
 int uci_parse_move(char *move_str) {
-    if (strlen(move_str) < 4) return 0;
-    
-    // Convert to internal format and execute
-    char internal_move[6];
-    strcpy(internal_move, move_str);
-    
-    // Add promotion piece if present
-    if (strlen(move_str) == 5) {
-        internal_move[4] = move_str[4];
-        internal_move[5] = '\0';
-    } else {
-        internal_move[4] = '\0';
-    }
-    
-    string_execute_move(internal_move, w, b);
+    size_t len = strlen(move_str);
+
+    if (len < 4 || len > 5) return 0;
+    string_execute_move(move_str, w, b);
     return 1; // Return success
 }
 
+// Plays the moves of a "position" command; moves_str is modified (strtok)
 void uci_make_moves(char *moves_str) {
     char *token;
-    char moves_copy[1000];
-    strcpy(moves_copy, moves_str);
-    
-    token = strtok(moves_copy, " ");
+
+    token = strtok(moves_str, " ");
     while (token != NULL) {
         if (!uci_parse_move(token)) {
             // Invalid move
@@ -104,42 +90,37 @@ void uci_make_moves(char *moves_str) {
     }
 }
 
+// "position startpos|fen <fen> [moves <m1> <m2> ...]"; input is modified.
+// No fixed-size copy: the moves list grows with the game.
 void uci_parse_position(char *input) {
-    char *token;
-    char input_copy[1000];
-    strcpy(input_copy, input);
-    
-    token = strtok(input_copy, " ");
-    token = strtok(NULL, " "); // Skip "position"
-    
-    if (token && strcmp(token, "startpos") == 0) {
-        uci_set_position_startpos();
-        token = strtok(NULL, " ");
-        
-        if (token && strcmp(token, "moves") == 0) {
-            // Get the rest of the string for moves
-            char *moves_start = strstr(input, "moves");
-            if (moves_start) {
-                moves_start += 6; // Skip "moves "
-                uci_make_moves(moves_start);
-            }
-        }
-    } else if (token && strcmp(token, "fen") == 0) {
-        // TODO: Parse FEN string
-        uci_set_position_startpos(); // Fallback for now
+    char *moves;
+
+    moves = strstr(input, " moves");
+    if (moves) {
+        *moves = '\0';
+        moves += 6; // Skip " moves"
     }
+
+    if (strncmp(input, "position startpos", 17) == 0) {
+        uci_set_position_startpos();
+    } else if (strncmp(input, "position fen ", 13) == 0) {
+        uci_set_position_fen(input + 13);
+    } else {
+        return;
+    }
+
+    if (moves)
+        uci_make_moves(moves);
 }
 
 void uci_parse_go(char *input) {
     char *token;
-    char input_copy[1000];
-    strcpy(input_copy, input);
     
     // Initialize search parameters
     memset(&uci_search_params, 0, sizeof(UCI_SEARCH_PARAMS));
     // depth 0: not given, resolved in uci_search_and_move()
     
-    token = strtok(input_copy, " ");
+    token = strtok(input, " ");
     token = strtok(NULL, " "); // Skip "go"
     
     while (token != NULL) {
@@ -218,15 +199,16 @@ void uci_search_and_move() {
 }
 
 void uci_loop() {
-    char input[4096];
+    // Long games send long "position ... moves" lines (about 5 bytes per ply)
+    static char input[65536];
     
     uci_mode = 1;
     
     while (fgets(input, sizeof(input), stdin)) {
         // Remove newline
-        input[strcspn(input, "\n")] = 0;
+        input[strcspn(input, "\r\n")] = 0;
         
-        if (strncmp(input, "uci", 3) == 0) {
+        if (strcmp(input, "uci") == 0) {
             uci_send_id();
             uci_send_options();
             uci_send("uciok");
