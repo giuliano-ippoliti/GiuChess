@@ -25,3 +25,6 @@ Thumbs.db
 
 # Perft test binary
 perft-test
+
+# Python
+__pycache__/
