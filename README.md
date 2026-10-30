@@ -141,6 +141,14 @@ Builds `perft-test` (from [`perft.c`](perft.c) and the engine sources) and count
 
 Each line prints `OK` or `MISMATCH`; the command exits with a non-zero status if any count differs.
 
+### Elo estimation
+```bash
+make
+python3 scripts/elo_match.py --log ELO_LOG.md
+```
+
+Plays GiuChess against Stockfish limited in strength (levels 1320 and 1600 by default, 24 openings with both colors, 10 s + 0.1 s), prints each game as it ends, then the estimated Elo with its 95% interval. `--log` appends the results to [`ELO_LOG.md`](ELO_LOG.md), the history of the engine's strength. Requires python-chess (`pip install chess`) and Stockfish (`brew install stockfish`); see `--help` for the options.
+
 ### Quick UCI Test
 ```bash
 echo -e "uci\nisready\nquit" | ./GiuChess-2.0 uci
