@@ -14,4 +14,9 @@ if [ -z "$LICHESS_BOT_TOKEN" ]; then
 	exit 1
 fi
 cd lichess-bot
+# macOS: keep the Mac awake while the bot runs. A sleeping Mac freezes the
+# engine while the Lichess clock keeps running, and loses the game on time.
+if command -v caffeinate >/dev/null 2>&1; then
+	exec caffeinate -is venv/bin/python lichess-bot.py --config ../config.yml "$@"
+fi
 exec venv/bin/python lichess-bot.py --config ../config.yml "$@"

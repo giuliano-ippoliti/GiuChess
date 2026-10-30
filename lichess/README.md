@@ -43,6 +43,12 @@ The bot then accepts the challenges allowed by `lichess/config.yml`. To play
 it, challenge it from another account on its Lichess profile page. Stop it
 with Ctrl-C. `lichess/run.sh -v` shows all the communication with Lichess.
 
+The computer must stay awake while the bot plays: a sleeping computer freezes
+the engine while the Lichess clock keeps running, and the game is lost on
+time. On macOS, `run.sh` starts the bot under `caffeinate`, which prevents
+sleep while it runs (on a laptop, keep it plugged in and the lid open). On
+other systems, disable sleep in the power settings.
+
 ## Configuration
 
 `lichess/config.yml` (from `config.yml.example`) overrides lichess-bot's
