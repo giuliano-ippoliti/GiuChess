@@ -31,6 +31,8 @@ int cont;
 
 
 int main(int argc, char *argv[]) {
+	char first[100];
+
 	init_array();
 
 	init_matrix();
@@ -69,11 +71,21 @@ exit(4);*/
 		seed++;
 	}*/
 
-	// Check for UCI mode
-	if (argc > 1 && strcmp(argv[1], "uci") == 0) {
-		uci_loop();
-	} else {
-		// Default to XBoard mode
+	// Protocol: UCI by default. XBoard if asked by the "xboard" argument,
+	// or if the GUI's first command is "xboard" (XBoard GUIs start the
+	// engine without arguments).
+	if (argc > 1 && strcmp(argv[1], "xboard") == 0) {
 		wait_for_input();
+	} else if (argc > 1 && strcmp(argv[1], "uci") == 0) {
+		uci_loop(NULL);
+	} else {
+		leggi(first, sizeof(first));	//byte by byte: reads nothing beyond this line
+		first[strcspn(first, "\r")] = '\0';
+		if (strcmp(first, "xboard") == 0) {
+			scrivi("\n");
+			wait_for_input();
+		} else {
+			uci_loop(first);
+		}
 	}
 }

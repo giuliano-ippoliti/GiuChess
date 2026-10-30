@@ -350,8 +350,10 @@ float alphabeta(int depth, float alpha, float beta, int color, char *bestmove) {
 				list_execute_move(tmplist);
 //llog("C1 - d=%d : %s éxécuté\n", depth, thismove2);
 
-				if (repeated_or_push())
+				if (repeated_or_push()) {
 					val = 0.0;		//draw by repetition
+					pv_len[ply+1] = 0;	//no search below: no stale variation
+				}
 				else {
 					val = -alphabeta(depth-1, -beta, -alphaL, -color, bestmove);
 					hist_len--;
@@ -427,8 +429,10 @@ if (depth == depthmax) {
 //llog("C-1 - d=%d : %s éxécuting\n", depth, thismove2);
 				list_execute_move(tmplist);
 //llog("C-1 - d=%d : %s éxécuté\n", depth, thismove2);
-				if (repeated_or_push())
+				if (repeated_or_push()) {
 					val = 0.0;		//draw by repetition
+					pv_len[ply+1] = 0;	//no search below: no stale variation
+				}
 				else {
 					val = -alphabeta(depth-1, -beta, -alphaL, -color, bestmove);
 					hist_len--;

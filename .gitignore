@@ -29,3 +29,7 @@ perft-test
 
 # Python
 __pycache__/
+
+# Lichess bot (lichess/README.md): local install and config with the token
+lichess/lichess-bot/
+lichess/config.yml
