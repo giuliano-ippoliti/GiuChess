@@ -23,7 +23,8 @@ compile.ps1
 .DS_Store
 Thumbs.db
 
-# Perft test binary
+# Engine and perft test binaries
+GiuChess-2.0
 perft-test
 
 # Python

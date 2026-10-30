@@ -12,7 +12,7 @@ CC = gcc
 OBJECTS = $(CSOURCES:.c=.o)
 PERFT_OBJECTS = $(filter-out main.o,$(OBJECTS)) perft.o
 
-.PHONY:	all perft clean cleanpgn nett
+.PHONY:	all debug perft clean cleanpgn nett
 
 all:	$(PROG)
 
@@ -21,6 +21,11 @@ $(PROG):	$(OBJECTS)
 	
 %.o:	%.c $(HEADERS)
 	$(CC) $(COMPIL_FLAGS) -c $<
+
+# Unoptimized build for debuggers (rebuilds everything; "make clean && make" to go back)
+debug:
+	$(MAKE) clean
+	$(MAKE) COMPIL_FLAGS="-Wall -g -O0"
 
 # Perft check: builds and runs the move generation test (exit status 1 on mismatch)
 perft:	$(PERFT)
