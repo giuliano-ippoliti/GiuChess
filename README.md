@@ -105,7 +105,7 @@ GiuChess/
 
 #### Compilation Options
 ```bash
-# Debug build
+# Debug build (unoptimized, for gdb/lldb; "make clean && make" to go back)
 make debug
 
 # Release build (optimized)
