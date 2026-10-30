@@ -1,0 +1,5 @@
+#!/bin/sh
+# Launches GiuChess in UCI mode, for GUIs that only take an executable
+# path (e.g. En Croissant: Engines > Add new > Local > this file).
+# Prints nothing itself: stdout is the UCI channel.
+exec "$(dirname "$0")/../GiuChess-2.0" uci
