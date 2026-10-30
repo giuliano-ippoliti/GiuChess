@@ -126,6 +126,7 @@ static int prev_pv_len, follow_pv;
 static int search_stopped;
 static long search_limit_ms;
 static struct timeval search_start;
+int (*search_poll)(void);		//if set, called during the search: returns 1 to stop it
 
 static long elapsed_ms() {
 	struct timeval now;
@@ -136,8 +137,43 @@ static long elapsed_ms() {
 
 static void check_time() {
 	//depth 1 is always completed, so that there is a move to play
-	if ((search_limit_ms > 0) && (depthmax > 1) && (elapsed_ms() >= search_limit_ms))
+	if (depthmax <= 1)
+		return;
+	if ((search_limit_ms > 0) && (elapsed_ms() >= search_limit_ms))
 		search_stopped = 1;
+	else if ((search_poll != NULL) && search_poll())
+		search_stopped = 1;
+}
+
+// Writes the principal variation pv[0] in coordinate notation ("e2e4 e7e5 ..."),
+// color being the side that moved last (-1: white to move)
+static void pv_string(char *out, size_t size, int color) {
+	piece wbck[16], bbck[16];
+	int rule50bck, i;
+	char lastbck, move[6];
+	MOVE_LEG mv;
+	size_t len = 0;
+
+	memcpy(wbck, w, sizeof(w));
+	memcpy(bbck, b, sizeof(b));
+	rule50bck = rule50;
+	lastbck = last_moved_color;
+	out[0] = '\0';
+	for (i = 0; i < pv_len[0]; i++) {
+		mv.order = pv[0][i].order;
+		mv.newpiece = pv[0][i].newpiece;
+		mv.bm_move = pv[0][i].bm_move;
+		mv.color = ((color == -1) == (i % 2 == 0)) ? 'W' : 'B';
+		conv_list_mov(move, &mv);
+		if (len + strlen(move) + 2 > size)
+			break;
+		len += sprintf(out + len, "%s%s", (i > 0) ? " " : "", move);
+		list_execute_move(&mv);
+	}
+	memcpy(w, wbck, sizeof(w));
+	memcpy(b, bbck, sizeof(b));
+	rule50 = rule50bck;
+	last_moved_color = lastbck;
 }
 
 // While following the previous principal variation, puts its move for this
@@ -437,11 +473,14 @@ if (depth == depthmax) {
 
 // Iterative deepening: searches depth 1, 2, ... maxdepth, trying the previous
 // iteration's principal variation first. With limit_ms > 0, stops when the
-// time is up and keeps the best move of the last completed depth.
+// time is up (or when search_poll() asks to) and keeps the best move of the
+// last completed depth. If report is set, it is called after each completed
+// depth with the score for the side to move (pawns) and the principal variation.
 // Returns the last completed depth.
-int search(int maxdepth, int color, char *bestmove, long limit_ms) {
-	char itermove[10];
+int search(int maxdepth, int color, char *bestmove, long limit_ms, SEARCH_REPORT report) {
+	char itermove[10], pvstr[512];
 	int depth, done;
+	float score;
 
 	if (maxdepth > MAXPLY-1)
 		maxdepth = MAXPLY-1;
@@ -457,7 +496,7 @@ int search(int maxdepth, int color, char *bestmove, long limit_ms) {
 	for (depth = 1; depth <= maxdepth; depth++) {
 		depthmax = depth;
 		follow_pv = 1;
-		alphabeta(depth, -200, 200, color, itermove);
+		score = alphabeta(depth, -200, 200, color, itermove);
 		if (search_stopped)
 			break;
 
@@ -465,6 +504,10 @@ int search(int maxdepth, int color, char *bestmove, long limit_ms) {
 		memcpy(prev_pv, pv[0], pv_len[0]*sizeof(PV_MOVE));
 		prev_pv_len = pv_len[0];
 		done = depth;
+		if (report != NULL) {
+			pv_string(pvstr, sizeof(pvstr), color);
+			report(depth, score, elapsed_ms(), search_nodes, pvstr);
+		}
 
 		//a deeper search would most likely not finish in time
 		if ((limit_ms > 0) && (elapsed_ms() >= limit_ms/2))

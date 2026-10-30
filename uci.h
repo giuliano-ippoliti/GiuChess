@@ -29,7 +29,8 @@ void uci_parse_position(char *input);
 void uci_parse_go(char *input);
 void uci_search_and_move();
 void uci_set_position_startpos();
-void uci_set_position_fen(char *fen);
+int uci_set_position_fen(char *fen);
+void uci_parse_setoption(char *input);
 void uci_make_moves(char *moves_str);
 int uci_parse_move(char *move_str);
 

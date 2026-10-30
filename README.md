@@ -15,9 +15,9 @@ GiuChess is a chess engine originally developed by Giuliano Ippoliti in 2005. Th
 
 - **Dual Protocol Support**: Both UCI and XBoard protocols
 - **Arena GUI Compatible**: Works seamlessly with Arena Chess GUI
-- **Configurable Depth**: Adjustable search depth (1-10 levels)
-- **Hash Table Support**: Configurable hash size (1-1024 MB)
-- **Multi-threading Ready**: Thread configuration support
+- **Configurable Depth**: Default search depth (1-10) when no time control is given
+- **Time Management**: Iterative deepening on the clock, `stop` and `go infinite` for analysis
+- **Search Information**: Score (centipawns or mate) and principal variation after each depth
 - **Professional Codebase**: Zero compilation warnings with `-Wall`
 
 ## 🚀 Quick Start
@@ -69,19 +69,20 @@ GiuChess 2.0 works with any UCI-compatible chess interface:
 ## ⚙️ Configuration
 
 ### UCI Options
-- **Hash**: Memory for hash tables (1-1024 MB, default: 32)
-- **Threads**: Number of threads (1-1, default: 1)
-- **Depth**: Search depth (1-10, default: 5)
+- **Depth**: Search depth used when `go` gives neither a depth nor a time (1-10, default: 5)
 
 ### Example UCI Session
 ```
 uci
-setoption name Hash value 64
 setoption name Depth value 6
 isready
 position startpos moves e2e4 e7e5
 go depth 5
+go infinite
+stop
 ```
+
+After each completed depth the engine sends `info depth <n> score cp <x> nodes <n> time <ms> nps <n> pv <moves>` (`score mate <n>` when it sees a mate), then `bestmove`. During a search it answers `isready`, and `stop` or `quit` end it with the best move of the last completed depth.
 
 ## 🛠️ Development
 
@@ -158,8 +159,6 @@ Expected output:
 ```
 id name GiuChess-2.0
 id author Giuliano Ippoliti
-option name Hash type spin default 32 min 1 max 1024
-option name Threads type spin default 1 min 1 max 1
 option name Depth type spin default 5 min 1 max 10
 uciok
 readyok

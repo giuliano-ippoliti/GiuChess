@@ -77,24 +77,25 @@ quit
 - `ucinewgame` - Nouvelle partie
 - `position startpos [moves ...]` - Position de départ + coups
 - `position fen <fen> [moves ...]` - Position FEN + coups
-- `go [depth <n>] [movetime <ms>] [wtime <ms>] [btime <ms>]` - Recherche
-- `stop` - Arrêt de la recherche (TODO)
-- `quit` - Quitter
+- `go [depth <n>] [movetime <ms>] [wtime <ms>] [btime <ms>] [winc <ms>] [binc <ms>] [movestogo <n>] [infinite]` - Recherche ; envoie `info depth ... score ... pv ...` à chaque profondeur terminée
+- `stop` - Arrêt de la recherche : `bestmove` avec le meilleur coup de la dernière profondeur terminée
+- `setoption name Depth value <n>` - Profondeur par défaut
+- `quit` - Quitter (aussi pendant une recherche)
+
+Pendant une recherche, le moteur répond à `isready`, `stop` et `quit`.
 
 ## Options UCI
 
-- `Hash` : Taille de la table de hachage (1-1024 MB) - TODO
-- `Threads` : Nombre de threads (1-8) - TODO  
-- `Depth` : Profondeur de recherche par défaut (1-10)
+- `Depth` : Profondeur de recherche quand `go` ne donne ni profondeur ni temps (1-10, défaut 5)
 
 ## Développement futur
 
-- [ ] Implémentation complète du parsing FEN
+- [x] Implémentation complète du parsing FEN
 - [ ] Table de transposition (Hash)
 - [ ] Support multi-threading
-- [ ] Commande `stop` pour arrêter la recherche
-- [ ] Options configurables via `setoption`
-- [ ] Recherche par temps avec gestion précise
+- [x] Commande `stop` pour arrêter la recherche
+- [x] Options configurables via `setoption`
+- [x] Recherche par temps (approfondissement itératif)
 
 ## Compatibilité
 

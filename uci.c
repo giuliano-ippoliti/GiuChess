@@ -17,9 +17,123 @@
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include "uci.h"
+#include <sys/select.h>
 
 UCI_SEARCH_PARAMS uci_search_params;
 int uci_mode = 0;
+
+// "Depth" option: search depth when "go" gives neither depth nor time
+static int uci_default_depth = STARTDPTH;
+// Commands received during a search
+static int uci_stop_received, uci_quit_received;
+
+// Input is read with read() into this buffer (not stdio), so that select()
+// tells whether a command is waiting while searching.
+// Long games send long "position ... moves" lines (about 5 bytes per ply).
+static char uci_inbuf[65536];
+static size_t uci_inlen;
+static int uci_eof;
+
+// Reads what stdin has into uci_inbuf, blocking only if wait is set
+static void uci_fill_input(int wait) {
+    fd_set fds;
+    struct timeval tv = {0, 0};
+    ssize_t n;
+
+    if (uci_eof || uci_inlen >= sizeof(uci_inbuf) - 1)
+        return;
+    if (!wait) {
+        FD_ZERO(&fds);
+        FD_SET(0, &fds);
+        if (select(1, &fds, NULL, NULL, &tv) <= 0)
+            return;
+    }
+    n = read(0, uci_inbuf + uci_inlen, sizeof(uci_inbuf) - 1 - uci_inlen);
+    if (n <= 0)
+        uci_eof = 1;
+    else
+        uci_inlen += n;
+}
+
+// Length of the first complete line in uci_inbuf (newline included), or 0.
+// A full buffer, or the end of input, ends a line.
+static size_t uci_first_line() {
+    char *nl = memchr(uci_inbuf, '\n', uci_inlen);
+
+    if (nl)
+        return nl - uci_inbuf + 1;
+    if (uci_inlen > 0 && (uci_eof || uci_inlen >= sizeof(uci_inbuf) - 1))
+        return uci_inlen;
+    return 0;
+}
+
+// Moves the first line (without "\r\n") into line and removes it from the buffer
+static void uci_take_line(char *line, size_t size, size_t len) {
+    size_t copy = (len < size) ? len : size - 1;
+
+    memcpy(line, uci_inbuf, copy);
+    line[copy] = '\0';
+    line[strcspn(line, "\r\n")] = '\0';
+    memmove(uci_inbuf, uci_inbuf + len, uci_inlen - len);
+    uci_inlen -= len;
+}
+
+// Reads the next command, waiting for it. Returns 0 at the end of input.
+static int uci_read_line(char *line, size_t size) {
+    size_t len;
+
+    while ((len = uci_first_line()) == 0) {
+        if (uci_eof)
+            return 0;
+        uci_fill_input(1);
+    }
+    uci_take_line(line, size, len);
+    return 1;
+}
+
+// Handles the commands allowed during a search ("stop", "quit", "isready",
+// "ponderhit"). Any other command is left for after the search.
+// Returns 1 if the search must stop.
+static int uci_poll() {
+    char line[64];
+    size_t len;
+
+    uci_fill_input(0);
+    while ((len = uci_first_line()) != 0) {
+        if (len >= sizeof(line))
+            break;
+        memcpy(line, uci_inbuf, len);
+        line[len] = '\0';
+        line[strcspn(line, "\r\n")] = '\0';
+        if (strcmp(line, "stop") == 0)
+            uci_stop_received = 1;
+        else if (strcmp(line, "quit") == 0)
+            uci_quit_received = 1;
+        else if (strcmp(line, "isready") == 0)
+            uci_send("readyok");
+        else if (strcmp(line, "ponderhit") != 0)
+            break;
+        uci_take_line(line, sizeof(line), len);
+    }
+    return uci_stop_received || uci_quit_received;
+}
+
+// Sends the result of each completed depth: score, nodes, time, principal variation
+static void uci_report(int depth, float score, long ms, unsigned long long nodes, const char *pv) {
+    char output[700], scorestr[32];
+    int plies;
+
+    if (score >= 98.0 || score <= -98.0) {
+        // mate: alphabeta scores it 99 + remaining depth, at the mated side
+        plies = depth - (int)(fabs(score) - 99.0 + 0.5);
+        sprintf(scorestr, "mate %d", (score > 0) ? (plies + 1) / 2 : -(plies / 2));
+    } else {
+        sprintf(scorestr, "cp %d", (int)lround(score * 100));
+    }
+    sprintf(output, "info depth %d score %s nodes %llu time %ld nps %llu pv %s", depth, scorestr,
+            nodes, ms, (ms > 0) ? nodes * 1000 / ms : nodes, pv);
+    uci_send(output);
+}
 
 void uci_send(char *message) {
     printf("%s\n", message);
@@ -32,9 +146,31 @@ void uci_send_id() {
 }
 
 void uci_send_options() {
-    uci_send("option name Hash type spin default 32 min 1 max 1024");
-    uci_send("option name Threads type spin default 1 min 1 max 1");
-    uci_send("option name Depth type spin default 5 min 1 max 10");
+    char output[100];
+
+    sprintf(output, "option name Depth type spin default %d min 1 max 10", STARTDPTH);
+    uci_send(output);
+}
+
+// "setoption name <id> [value <x>]"
+void uci_parse_setoption(char *input) {
+    char *name, *value;
+    int depth;
+
+    name = strstr(input, "name ");
+    if (!name)
+        return;
+    name += 5;
+    value = strstr(name, " value ");
+    if (value) {
+        *value = '\0';
+        value += 7;
+    }
+    if (strcasecmp(name, "Depth") == 0 && value) {
+        depth = atoi(value);
+        if (depth >= 1 && depth <= 10)
+            uci_default_depth = depth;
+    }
 }
 
 void uci_set_position_startpos() {
@@ -43,9 +179,24 @@ void uci_set_position_startpos() {
     last_moved_color = 'B'; // White to move initially
 }
 
-void uci_set_position_fen(char *fen) {
-    if (!load_fen(fen))
-        uci_set_position_startpos(); // Position that cannot be represented
+// Returns 0 (and keeps the previous position) if the FEN cannot be loaded
+int uci_set_position_fen(char *fen) {
+    piece wbck[16], bbck[16];
+    int rule50bck;
+    char lastbck;
+
+    memcpy(wbck, w, sizeof(w));
+    memcpy(bbck, b, sizeof(b));
+    rule50bck = rule50;
+    lastbck = last_moved_color;
+    if (load_fen(fen))
+        return 1;
+    memcpy(w, wbck, sizeof(w));
+    memcpy(b, bbck, sizeof(b));
+    rule50 = rule50bck;
+    last_moved_color = lastbck;
+    uci_send("info string invalid FEN, position unchanged");
+    return 0;
 }
 
 int uci_string_to_square(char *square_str) {
@@ -104,7 +255,8 @@ void uci_parse_position(char *input) {
     if (strncmp(input, "position startpos", 17) == 0) {
         uci_set_position_startpos();
     } else if (strncmp(input, "position fen ", 13) == 0) {
-        uci_set_position_fen(input + 13);
+        if (!uci_set_position_fen(input + 13))
+            return;
     } else {
         return;
     }
@@ -153,10 +305,10 @@ void uci_parse_go(char *input) {
 }
 
 void uci_search_and_move() {
-    char bestmove[10];
-    int color, depth, reached, mytime, myinc, movestogo;
+    char bestmove[10], line[64], output[100];
+    int color, depth, mytime, myinc, movestogo;
     long limit_ms;
-    struct timeval start, end;
+    size_t len;
     
     // Determine who is to move
     color = (last_moved_color == 'W') ? 1 : -1; // 1 for black, -1 for white
@@ -165,7 +317,9 @@ void uci_search_and_move() {
     mytime = (color == -1) ? uci_search_params.wtime : uci_search_params.btime;
     myinc = (color == -1) ? uci_search_params.winc : uci_search_params.binc;
     limit_ms = 0;
-    if (uci_search_params.movetime > 0) {
+    if (uci_search_params.infinite) {
+        limit_ms = 0;
+    } else if (uci_search_params.movetime > 0) {
         limit_ms = uci_search_params.movetime;
     } else if (mytime > 0) {
         movestogo = (uci_search_params.movestogo > 0) ? uci_search_params.movestogo : 30;
@@ -174,23 +328,39 @@ void uci_search_and_move() {
             limit_ms = mytime / 2;
     }
     
-    // Set search depth: as given, else unlimited with a time limit, else default
+    // Set search depth: as given, else unlimited with a time limit or
+    // "infinite", else the "Depth" option
     depth = uci_search_params.depth;
     if (depth <= 0)
-        depth = (limit_ms > 0) ? MAX_SEARCH_DEPTH : STARTDPTH;
+        depth = (limit_ms > 0 || uci_search_params.infinite) ? MAX_SEARCH_DEPTH : uci_default_depth;
     
-    // Perform search
-    gettimeofday(&start, NULL);
-    reached = search(depth, color, bestmove, limit_ms);
-    gettimeofday(&end, NULL);
+    // Perform search; "stop" or "quit" end it early
+    uci_stop_received = 0;
+    bestmove[0] = '\0';
+    search_poll = uci_poll;
+    search(depth, color, bestmove, limit_ms, uci_report);
+    search_poll = NULL;
     
-    char output[100];
-    sprintf(output, "info depth %d time %ld nodes %llu", reached,
-            (long)((end.tv_sec - start.tv_sec) * 1000 + (end.tv_usec - start.tv_usec) / 1000),
-            search_nodes);
-    uci_send(output);
+    // "go infinite": the best move is only sent after "stop"
+    while (uci_search_params.infinite && !uci_stop_received && !uci_quit_received) {
+        while ((len = uci_first_line()) == 0 && !uci_eof)
+            uci_fill_input(1);
+        if (len == 0)
+            break;
+        uci_take_line(line, sizeof(line), len);
+        if (strcmp(line, "stop") == 0)
+            uci_stop_received = 1;
+        else if (strcmp(line, "quit") == 0)
+            uci_quit_received = 1;
+        else if (strcmp(line, "isready") == 0)
+            uci_send("readyok");
+    }
     
-    // Send best move
+    // Send best move ("0000": no legal move)
+    if (bestmove[0] == '\0') {
+        uci_send("bestmove 0000");
+        return;
+    }
     sprintf(output, "bestmove %s", bestmove);
     uci_send(output);
     
@@ -199,15 +369,11 @@ void uci_search_and_move() {
 }
 
 void uci_loop() {
-    // Long games send long "position ... moves" lines (about 5 bytes per ply)
-    static char input[65536];
+    static char input[sizeof(uci_inbuf)];
     
     uci_mode = 1;
     
-    while (fgets(input, sizeof(input), stdin)) {
-        // Remove newline
-        input[strcspn(input, "\r\n")] = 0;
-        
+    while (!uci_quit_received && uci_read_line(input, sizeof(input))) {
         if (strcmp(input, "uci") == 0) {
             uci_send_id();
             uci_send_options();
@@ -227,13 +393,13 @@ void uci_loop() {
             uci_search_and_move();
         }
         else if (strncmp(input, "stop", 4) == 0) {
-            // TODO: Implement search stopping
+            // No search running: nothing to stop
         }
         else if (strncmp(input, "quit", 4) == 0) {
             break;
         }
         else if (strncmp(input, "setoption", 9) == 0) {
-            // TODO: Implement option setting
+            uci_parse_setoption(input);
         }
     }
 }
