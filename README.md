@@ -53,6 +53,11 @@ gcc -Wall -g -O2 -o GiuChess-2.0.exe *.c -lm
 4. Select "UCI" as the protocol
 5. Click OK and start playing!
 
+### En Croissant (macOS, Linux, Windows)
+1. Build the engine with `make`
+2. Go to `Engines` → `Add new` → `Local`
+3. Select `scripts/giuchess_uci`: it starts `GiuChess-2.0` with the `uci` argument, which En Croissant cannot pass itself
+
 ### Other UCI-Compatible GUIs
 GiuChess 2.0 works with any UCI-compatible chess interface:
 - ChessBase

@@ -1,7 +1,7 @@
 PROG = GiuChess-2.0
 PERFT = perft-test
-CSOURCES = check.c exec_mov.c main.c util_functs.c iniz.c legal.c pieces_legmoves.c pieces_ex_legmoves.c wblegmov.c rw_thread.c eval_pos.c list.c uci.c
-HEADERS = check.h exec_mov.h main.h util_functs.h iniz.h legal.h pieces_legmoves.h pieces_ex_legmoves.h wblegmov.h rw_thread.h eval_pos.h list.h uci.h
+CSOURCES = check.c exec_mov.c main.c util_functs.c iniz.c legal.c pieces_legmoves.c pieces_ex_legmoves.c wblegmov.c rw_thread.c eval_pos.c list.c uci.c fen.c
+HEADERS = check.h exec_mov.h main.h util_functs.h iniz.h legal.h pieces_legmoves.h pieces_ex_legmoves.h wblegmov.h rw_thread.h eval_pos.h list.h uci.h fen.h
 COMPIL_FLAGS = -Wall -g -O2
 # x86-64 only: keep the binary runnable on CPUs without BMI2
 ifeq ($(shell uname -m),x86_64)
