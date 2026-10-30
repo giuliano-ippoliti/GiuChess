@@ -23,7 +23,10 @@
 
 float evaluate(int);
 float alphabeta(int, float, float, int, char *);
-int search(int, int, char *, long);
+// Called after each completed depth: depth, score (pawns, side to move), ms, nodes, pv
+typedef void (*SEARCH_REPORT)(int, float, long, unsigned long long, const char *);
+int search(int, int, char *, long, SEARCH_REPORT);
+extern int (*search_poll)(void);
 void reset_history();
 void record_position();
 int threefold();
