@@ -23,8 +23,8 @@ abort_time: 30                 # Abort a game if the opponent does not move for 
 
 challenge:                     # Which challenges to accept.
   concurrency: 1               # One game at a time: the engine uses one CPU core per game.
-  accept_bot: true             # Also accept challenges from other bots.
-  only_bot: false
+  accept_bot: false            # Humans only: decline challenges from other bots.
+  only_bot: false              # Must stay false, or humans would be declined too.
   min_increment: 0
   max_increment: 20            # Seconds.
   min_base: 60                 # Seconds: GiuChess is too slow for very short games.
