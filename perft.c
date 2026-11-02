@@ -48,6 +48,15 @@ static const PERFT_TEST tests[] = {
 	  { 48ULL, 2039ULL, 97862ULL } },
 	{ "position3", "8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - -", 5,
 	  { 14ULL, 191ULL, 2812ULL, 43238ULL, 674624ULL } },
+	// Promotions (with and without capture) and castling rights lost to captures
+	{ "position4", "r3k2r/Pppp1ppp/1b3nbN/nP6/BBP1P3/q4N2/Pp1P2PP/R2Q1RK1 w kq -", 4,
+	  { 6ULL, 264ULL, 9467ULL, 422333ULL } },
+	// Position 4 mirrored, black to move: must give the same counts
+	{ "position4b", "r2q1rk1/pP1p2pp/Q4n2/bbp1p3/Np6/1B3NBn/pPPP1PPP/R3K2R b KQ -", 4,
+	  { 6ULL, 264ULL, 9467ULL, 422333ULL } },
+	// Promotion on d8 with capture, discovered checks
+	{ "position5", "rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ -", 4,
+	  { 44ULL, 1486ULL, 62379ULL, 2103487ULL } },
 };
 
 static unsigned long long perft(int depth, int color) {
@@ -110,7 +119,7 @@ int main(void) {
 				}
 			}
 			nodes = perft(d, color);
-			printf("%-10s depth %d: %12llu  expected %12llu  %s\n", tests[t].name, d,
+			printf("%-11s depth %d: %12llu  expected %12llu  %s\n", tests[t].name, d,
 			       nodes, tests[t].expected[d-1],
 			       (nodes == tests[t].expected[d-1]) ? "OK" : "MISMATCH");
 			if (nodes != tests[t].expected[d-1])

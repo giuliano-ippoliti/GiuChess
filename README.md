@@ -143,6 +143,11 @@ Builds `perft-test` (from [`perft.c`](perft.c) and the engine sources) and count
 - Starting position, depths 1-5: 20, 400, 8902, 197281, 4865609
 - Kiwipete (`r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -`), depths 1-3: 48, 2039, 97862
 - Position 3 (`8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - -`, en passant and pins), depths 1-5: 14, 191, 2812, 43238, 674624
+- Position 4 (`r3k2r/Pppp1ppp/1b3nbN/nP6/BBP1P3/q4N2/Pp1P2PP/R2Q1RK1 w kq -`, promotions and castling rights lost to captures), depths 1-4: 6, 264, 9467, 422333
+- Position 4 mirrored (`r2q1rk1/pP1p2pp/Q4n2/bbp1p3/Np6/1B3NBn/pPPP1PPP/R3K2R b KQ -`, the same with black to move), same counts
+- Position 5 (`rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ -`, promotion with capture, discovered checks), depths 1-4: 44, 1486, 62379, 2103487
+
+The values of positions 4 and 5 were also checked with python-chess.
 
 Each line prints `OK` or `MISMATCH`; the command exits with a non-zero status if any count differs.
 
