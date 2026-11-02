@@ -43,6 +43,12 @@ The bot then accepts the challenges allowed by `lichess/config.yml`. To play
 it, challenge it from another account on its Lichess profile page. Stop it
 with Ctrl-C. `lichess/run.sh -v` shows all the communication with Lichess.
 
+The computer must stay awake while the bot plays: a sleeping computer freezes
+the engine while the Lichess clock keeps running, and the game is lost on
+time. On macOS, `run.sh` starts the bot under `caffeinate`, which prevents
+sleep while it runs (on a laptop, keep it plugged in and the lid open). On
+other systems, disable sleep in the power settings.
+
 ## Configuration
 
 `lichess/config.yml` (from `config.yml.example`) overrides lichess-bot's
@@ -57,8 +63,12 @@ Main choices for GiuChess:
 - **No resignation or draw offers**: the bot plays every game to the end.
 - **`move_overhead: 1000`**: one second per move kept for network lag;
   increase it if the bot loses on time.
-- **`matchmaking.allow_matchmaking: false`**: the bot only answers challenges.
-  Set it to `true` to make it challenge other bots when idle.
+- **Humans only** (`challenge.accept_bot: false`): challenges from other bots
+  are declined. Set it to `true` to also play against bots.
+- **`matchmaking.allow_matchmaking: false`**: the bot only answers challenges,
+  it never starts a game itself.
+  Keep it `false` for humans only: when set to `true`, the bot challenges
+  other bots when idle.
 
 The engine is started from the repository root (`engine.dir: "../.."`),
 without arguments: GiuChess speaks UCI by default.
